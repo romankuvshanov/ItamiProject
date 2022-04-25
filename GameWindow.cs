@@ -12,8 +12,8 @@ namespace ItamiProject
             #region
             Size = new Size(1280, 720);
             string gamePath = Environment.CurrentDirectory;
-            BackgroundImage = Image.FromFile(Path.Combine(gamePath, "Backgrounds\\battleback8.png"));
-            Image characterImage = Image.FromFile(Path.Combine(gamePath, "Characters\\maid_blue_front.png"));
+            BackgroundImage = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Backgrounds\\battleback8.png"));
+            Image characterImage = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Characters\\maid_blue_front.png"));
             int playerX = Width / 2;
             int playerY = Height / 4 * 3;
             int verticalEnemiesAmount = 50;
