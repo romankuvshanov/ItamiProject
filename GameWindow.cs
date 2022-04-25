@@ -9,71 +9,80 @@ namespace ItamiProject
     {
         public GameWindow()
         {
-            #region
             Size = new Size(1280, 720);
             string gamePath = Environment.CurrentDirectory;
             BackgroundImage = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Backgrounds\\battleback8.png"));
             Image characterImage = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Characters\\maid_blue_front.png"));
-            int playerX = Width / 2;
-            int playerY = Height / 4 * 3;
-            int verticalEnemiesAmount = 50;
-            Rectangle[] verticalEnemies = new Rectangle[verticalEnemiesAmount];
-            int horizontalEnemiesAmount = 10;
-            Rectangle[] horizontalEnemies = new Rectangle[horizontalEnemiesAmount];
-            int offset = 10;
-            for (int i = 0; i < verticalEnemiesAmount; i++)
-            {
-                verticalEnemies[i] = new Rectangle(offset, 0, 15, 15);
-                offset += 70;
-            }
-            offset = 10;
-            for (int i = 0; i < horizontalEnemiesAmount; i++)
-            {
-                horizontalEnemies[i] = new Rectangle(Width, offset, 20, 20);
-                offset += 120;
-            }
+            Image characterImageTransparent = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Characters\\maid_blue_front_transparent.png"));
+            byte speed = 7;
+            bool moveUp = false;
+            bool moveLeft = false;
+            bool moveDown = false;
+            bool moveRight = false;
+            PictureBox charBox = new PictureBox();
+            charBox.Image = characterImage;
+            charBox.Location = new Point(Width / 2, Height / 4 * 3);
+            charBox.Size = characterImage.Size;
+            charBox.BackColor = Color.Transparent;
+            Controls.Add(charBox);
             Timer gameTimer = new Timer();
-            gameTimer.Interval = 10;
+            gameTimer.Interval = 16;
             gameTimer.Start();
             gameTimer.Tick += (sender, e) =>
             {
-                for (int i = 0; i < verticalEnemiesAmount; i++)
-                {
-                    if (verticalEnemies[i].Y > Height) verticalEnemies[i].Y = -15;
-                    else verticalEnemies[i].Offset(0, 5);
-                }
-                for (int i = 0; i < horizontalEnemiesAmount; i++)
-                {
-                    if (horizontalEnemies[i].X < -20) horizontalEnemies[i].X = Width;
-                    else horizontalEnemies[i].Offset(-8, 0);
-                }
+                if(moveUp && charBox.Top > 0) charBox.Top -= speed;
+                if(moveLeft && charBox.Left > 0) charBox.Left -= speed;
+                if(moveDown && charBox.Bottom < Height) charBox.Top += speed;
+                if (moveRight && charBox.Right < Width) charBox.Left += speed;
                 Invalidate();
             };
             Paint += (sender, e) =>
             {
-                e.Graphics.DrawRectangles(new Pen(Color.OrangeRed), verticalEnemies);
-                e.Graphics.DrawRectangles(new Pen(Color.BlueViolet), horizontalEnemies);
-                e.Graphics.DrawImage(characterImage, playerX, playerY);
             };
             KeyDown += (sender, e) =>
               {
                   switch (e.KeyCode)
                   {
                       case Keys.W:
-                          if (playerY >= 0) playerY -= 15;
+                          moveUp = true;
                           break;
                       case Keys.A:
-                          if (playerX > 10) playerX -= 15;
+                          moveLeft = true;
                           break;
                       case Keys.S:
-                          if (playerY < Height - 50) playerY += 15;
+                          moveDown = true;
                           break;
                       case Keys.D:
-                          if (playerX < Width - 50) playerX += 15;
+                          moveRight = true;
+                          break;
+                      case Keys.ShiftKey:
+                          speed = 4;
+                          charBox.Image = characterImageTransparent;
                           break;
                   }
               };
-            #endregion
+            KeyUp += (sender, e) =>
+              {
+                  switch (e.KeyCode)
+                  {
+                      case Keys.W:
+                          moveUp = false;
+                          break;
+                      case Keys.A:
+                          moveLeft = false;
+                          break;
+                      case Keys.S:
+                          moveDown = false;
+                          break;
+                      case Keys.D:
+                          moveRight = false;
+                          break;
+                      case Keys.ShiftKey:
+                          speed = 7;
+                          charBox.Image = characterImage;
+                          break;
+                  }
+              };
         }
 
         public static void Main()
