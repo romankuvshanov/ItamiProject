@@ -11,6 +11,7 @@ namespace ItamiProject
         {
             Game game = new Game();
             Point playerCoordinates = new Point();
+            Point enemyCoordinates = new Point();
 
             #region Form settings
             Size = new Size(game.width, game.height);
@@ -24,6 +25,7 @@ namespace ItamiProject
             BackgroundImage = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Backgrounds\\battleback8.png"));
             Image playerImage = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Characters\\maid_blue_front.png"));
             Image playerImageTransparent = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Characters\\maid_blue_front_transparent.png"));
+            Image enemyImage = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Characters\\maid_blue_front_monster.png"));
             #endregion
 
             Timer gameTimer = new Timer();
@@ -32,12 +34,14 @@ namespace ItamiProject
             gameTimer.Tick += (sender, e) =>
             {
                 playerCoordinates = game.CheckForMovement();
+                enemyCoordinates = game.MoveEnemy();
                 Invalidate();
             };
             Paint += (sender, e) =>
               {
                   if(!game.shiftIsDown) e.Graphics.DrawImage(playerImage, playerCoordinates);
                   else e.Graphics.DrawImage(playerImageTransparent, playerCoordinates);
+                  e.Graphics.DrawImage(enemyImage, enemyCoordinates);
               };
             KeyDown += (sender, e) =>
               {

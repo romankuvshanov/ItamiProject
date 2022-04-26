@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace ItamiProject
@@ -11,16 +10,26 @@ namespace ItamiProject
         bool moveDown = false;
         bool moveRight = false;
         public bool shiftIsDown = false;
-        byte speedWithoutShift = 7;
-        byte speedWithShift = 4;
+        int speedWithoutShift = 7;
+        int speedWithShift = 4;
+        int enemySpeed = 5;
         public int width, height;
         Player player;
+        Player enemy;
 
         public Game()
         {
             width = 1280;
             height = 720;
             player = new Player(width / 2, height * 3 / 4);
+            enemy = new Player(width / 2, height / 6);
+        }
+
+        public Point MoveEnemy()
+        {
+            if (enemy.x >= width * 3 / 4 || enemy.x <= width / 4) enemySpeed = -enemySpeed;
+            enemy.x += enemySpeed;
+            return new Point(enemy.x, enemy.y);
         }
 
         public void StartMovement(Keys pressedKey)
