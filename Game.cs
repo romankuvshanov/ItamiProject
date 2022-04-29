@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ItamiProject
@@ -83,6 +85,22 @@ namespace ItamiProject
             if (moveDown && player.y + 54 < height) player.y += speedWithoutShift;
             if (moveRight && player.x + 29 < width) player.x += speedWithoutShift;
             return new Point(player.x, player.y);
+        }
+
+        public List<Point> UpdateEnemyBombsCoords()
+        {
+            Random random = new Random();
+            if (enemy.boombsCoords.Count < 15 && random.Next(0, 50) == 1)
+            {
+                enemy.boombsCoords.Add(new Point(enemy.x, enemy.y + 100));
+            }
+
+            for (int i = 0; i < enemy.boombsCoords.Count; i++)
+            {
+                if (enemy.boombsCoords[i].Y >= 720) enemy.boombsCoords.RemoveAt(i);
+                else enemy.boombsCoords[i] = new Point(enemy.boombsCoords[i].X, enemy.boombsCoords[i].Y + 1);
+            }
+            return enemy.boombsCoords;
         }
     }
 }

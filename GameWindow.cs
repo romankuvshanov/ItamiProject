@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -13,6 +14,9 @@ namespace ItamiProject
             Point playerCoordinates = new Point();
             Point enemyCoordinates = new Point();
 
+            // В этом листе бомбочки
+            List<Point> enemyBombsCoordinates = new List<Point>();
+
             #region Form settings
             Size = new Size(game.width, game.height);
             MinimizeBox = false;
@@ -26,6 +30,7 @@ namespace ItamiProject
             Image playerImage = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Characters\\maid_blue_front.png"));
             Image playerImageTransparent = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Characters\\maid_blue_front_transparent.png"));
             Image enemyImage = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Characters\\maid_blue_front_monster.png"));
+            Image enemyBomb = Image.FromFile(Path.Combine(gamePath, "..\\..\\", "Characters\\pile_of_poo.png"));
             #endregion
 
             Timer gameTimer = new Timer();
@@ -35,6 +40,7 @@ namespace ItamiProject
             {
                 playerCoordinates = game.CheckForMovement();
                 enemyCoordinates = game.MoveEnemy();
+                enemyBombsCoordinates = game.UpdateEnemyBombsCoords();
                 Invalidate();
             };
             Paint += (sender, e) =>
@@ -42,6 +48,11 @@ namespace ItamiProject
                   if(!game.shiftIsDown) e.Graphics.DrawImage(playerImage, playerCoordinates);
                   else e.Graphics.DrawImage(playerImageTransparent, playerCoordinates);
                   e.Graphics.DrawImage(enemyImage, enemyCoordinates);
+
+                  // Здесь я отрисовываю бомбочки
+                  foreach (var point in enemyBombsCoordinates)
+                      e.Graphics.DrawImage(enemyBomb, point);
+                  
               };
             KeyDown += (sender, e) =>
               {
