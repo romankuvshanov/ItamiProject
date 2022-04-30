@@ -34,18 +34,6 @@ namespace GameView
 
             #endregion
 
-            /*
-             * Заставляет форму издавать звуки винды при нажатии
-             * клавиш после скрытия этого контрола
-             * 
-             * TODO: пофиксить
-             *
-            IntroControl introControl = new IntroControl(Size);
-            introControl.BackColor = Color.Black;
-            introControl.Dock = DockStyle.Fill;
-            Controls.Add(introControl);
-            */
-
             #region Timer
 
             Timer gameTimer = new Timer();
@@ -65,6 +53,7 @@ namespace GameView
             {
                 if(game.shiftIsDown) e.Graphics.DrawImage(playerImageTransparent, game.player.x, game.player.y);
                 else e.Graphics.DrawImage(playerImage, game.player.x, game.player.y);
+                e.Graphics.DrawImage(enemyImage, game.enemy.x, game.enemy.y);
             };
 
             #endregion

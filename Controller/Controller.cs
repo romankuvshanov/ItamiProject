@@ -29,9 +29,9 @@ namespace GameController
              * UPDATE: в тохе проблема такая же, но только в одном направлении
              */
             if (keySet.Contains(Keys.W) && key == Keys.S) keySet.Remove(Keys.W);
+            else if (keySet.Contains(Keys.S) && key == Keys.W) keySet.Remove(Keys.S);
             if (keySet.Contains(Keys.A) && key == Keys.D) keySet.Remove(Keys.A);
-            if (keySet.Contains(Keys.S) && key == Keys.W) keySet.Remove(Keys.S);
-            if (keySet.Contains(Keys.D) && key == Keys.A) keySet.Remove(Keys.D);
+            else if (keySet.Contains(Keys.D) && key == Keys.A) keySet.Remove(Keys.D);
             keySet.Add(key);
         }
 
@@ -43,6 +43,7 @@ namespace GameController
         public void InitiateMovement()
         {
             game.MovePlayer(keySet);
+            game.MoveEnemy();
         }
     }
 }
