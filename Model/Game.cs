@@ -13,8 +13,8 @@ namespace GameModel
         {
             Width = 1280;
             Height = 720;
-            player = new Player(Width / 2, Height * 3 / 4);
-            enemy = new Enemy(Width / 2, Height / 4);
+            player = new Player(Width / 2, Height * 3 / 4, 5, -2);
+            enemy = new Enemy(Width / 2, Height / 4, 4, 1000);
         }
 
         public void MoveEnemy()

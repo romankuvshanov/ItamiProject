@@ -1,18 +1,14 @@
 ﻿namespace GameModel
 {
-    public class Enemy
+    public class Enemy : Character
     {
         // Пока не используется
         private int HP;
 
-        public int x;
-        public int y;
-        public int speed;
-        public Enemy(int x, int y)
+        public Enemy(int x, int y, int speed, int HP)
+            : base(x, y, speed)
         {
-            this.x = x;
-            this.y = y;
-            speed = 4;
+            this.HP = HP;
         }
     }
 }

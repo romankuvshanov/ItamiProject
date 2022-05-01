@@ -1,17 +1,13 @@
 ﻿namespace GameModel
 {
-    public class Player
+    public class Player : Character
     {
-        public int x;
-        public int y;
-        public int speed;
         public int shiftModifier;
-        public Player(int x, int y)
+
+        public Player(int x, int y, int speed, int shiftModifier)
+            : base(x, y, speed)
         {
-            this.x = x;
-            this.y = y;
-            speed = 5;
-            shiftModifier = -2;
+            this.shiftModifier = shiftModifier;
         }
     }
 }
