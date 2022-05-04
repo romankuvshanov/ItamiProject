@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Media;
 using System.Drawing;
 using System.Windows.Forms;
 using GameModel;
@@ -33,6 +34,13 @@ namespace GameView
             Image enemyImage = Image.FromFile($"{charFolder}maid_blue_front_enemy.png");
 
             #endregion
+
+            // Раскоментируйте, чтобы запустить музыку в игре
+            # region Music
+            //string musicFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Music\\";
+            //SoundPlayer simpleSound = new SoundPlayer($"{musicFolder}music.wav");
+            //simpleSound.PlayLooping();
+            # endregion
 
             #region Timer
 
