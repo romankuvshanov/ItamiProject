@@ -5,6 +5,7 @@
         public int x;
         public int y;
         public int speed;
+
         public Character(int x, int y, int speed)
         {
             this.x = x;

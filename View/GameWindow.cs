@@ -21,6 +21,7 @@ namespace GameView
             MinimizeBox = false;
             MaximizeBox = false;
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            // FormBorderStyle.None позволяет правильно считать границы окна, чтобы игрок за них не выходил
 
             #endregion
 
@@ -37,9 +38,11 @@ namespace GameView
 
             // Раскоментируйте, чтобы запустить музыку в игре
             # region Music
+
             //string musicFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Music\\";
             //SoundPlayer simpleSound = new SoundPlayer($"{musicFolder}music.wav");
             //simpleSound.PlayLooping();
+
             # endregion
 
             #region Timer
@@ -57,11 +60,15 @@ namespace GameView
 
             #region Painting
 
+            SolidBrush projectileBrush = new SolidBrush(Color.Red);
+
             Paint += (sender, e) =>
             {
-                if(game.shiftIsDown) e.Graphics.DrawImage(playerImageTransparent, game.player.x, game.player.y);
-                else e.Graphics.DrawImage(playerImage, game.player.x, game.player.y);
-                e.Graphics.DrawImage(enemyImage, game.enemy.x, game.enemy.y);
+                if (game.shiftIsDown) e.Graphics.DrawImage(playerImageTransparent, game.player.x, game.player.y, 29, 54);
+                else e.Graphics.DrawImage(playerImage, game.player.x, game.player.y, 29, 54);
+                e.Graphics.DrawImage(enemyImage, game.enemy.x, game.enemy.y, 29, 54);
+                foreach (var projectile in game.projectiles)
+                    e.Graphics.FillEllipse(projectileBrush, projectile.x, projectile.y, projectile.hitbox, projectile.hitbox);
             };
 
             #endregion
@@ -71,9 +78,13 @@ namespace GameView
             KeyDown += (sender, e) =>
               {
                   if (e.KeyCode == Keys.Escape)
+                  {
+                      gameTimer.Stop();
                       if (MessageBox.Show("Выйти из игры?", "Выйти?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                       == DialogResult.Yes)
                           Close();
+                      else gameTimer.Start();
+                  }
                   ctrl.AddKeyToSet(e.KeyCode);
               };
             KeyUp += (sender, e) =>

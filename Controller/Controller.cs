@@ -44,6 +44,7 @@ namespace GameController
         {
             game.MovePlayer(keySet);
             game.MoveEnemy();
+            game.MoveProjectiles();
         }
     }
 }
