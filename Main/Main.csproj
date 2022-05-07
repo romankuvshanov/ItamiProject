@@ -7,7 +7,7 @@
     <ProjectGuid>{153A2399-45F3-43A1-8ACF-C48C59B59DEC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Main</RootNamespace>
-    <AssemblyName>Main</AssemblyName>
+    <AssemblyName>Itami Project</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -35,6 +35,9 @@
   <PropertyGroup>
     <StartupObject>Main.MainClass</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ItamiIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
@@ -58,6 +61,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ItamiIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

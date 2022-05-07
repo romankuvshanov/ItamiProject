@@ -7,6 +7,7 @@ namespace GameController
     {
         Game game;
         HashSet<Keys> keySet;
+
         public Controller(Game game)
         {
             this.game = game;
@@ -40,11 +41,12 @@ namespace GameController
             keySet.Remove(key);
         }
 
-        public void InitiateMovement()
+        public void IterateGameCycle()
         {
             game.MovePlayer(keySet);
             game.MoveEnemy();
             game.MoveProjectiles();
+            game.CheckForCollision();
         }
     }
 }

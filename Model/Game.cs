@@ -4,9 +4,15 @@ namespace GameModel
 {
     public class Game
     {
+        // Параметры
         public int Width;
         public int Height;
+
+        // Состояния
         public bool shiftIsDown;
+        public bool IsCollisionOccured;
+
+        // Сущности
         public Player player;
         public Enemy enemy;
         public Projectile[] projectiles;
@@ -15,8 +21,8 @@ namespace GameModel
         {
             Width = 1280;
             Height = 720;
-            player = new Player(Width/2, Height*3/4, 5, -2);
-            enemy = new Enemy(Width/2, Height/4, 4, 1000);
+            player = new Player(Width / 2, Height * 3 / 4, 5, -2);
+            enemy = new Enemy(Width / 2, Height / 4, 4, 1000);
             projectiles = new Projectile[15];
             projectiles[0] = new Projectile(15, enemy.x - 58, enemy.y + 54);
             projectiles[5] = new Projectile(15, enemy.x, enemy.y + 108);
@@ -35,10 +41,20 @@ namespace GameModel
             }
         }
 
-        public void MoveEnemy()
+        public void CheckForCollision()
         {
-            if (enemy.x > Width * 3 / 4 || enemy.x < Width / 4) enemy.speed = -enemy.speed;
-            enemy.x += enemy.speed;
+            foreach (var projectile in projectiles)
+            {
+                if (projectile.x < player.x + 29
+                    && projectile.x + projectile.hitbox > player.x
+                    && projectile.y < player.y + 54
+                    && projectile.y + projectile.hitbox > player.y)
+                {
+                    IsCollisionOccured = true;
+                    break;
+                }
+                else IsCollisionOccured = false;
+            }
         }
 
         public void MoveProjectiles()
@@ -89,6 +105,12 @@ namespace GameModel
             }
         }
 
+        public void MoveEnemy()
+        {
+            if (enemy.x > Width * 3 / 4 || enemy.x < Width / 4) enemy.speed = -enemy.speed;
+            enemy.x += enemy.speed;
+        }
+        
         public void MovePlayer(HashSet<Keys> keySet)
         {
             if (keySet.Contains(Keys.ShiftKey))

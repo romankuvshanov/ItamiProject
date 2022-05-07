@@ -65,6 +65,7 @@
     <Content Include="_Characters\maid_blue_front.png" />
     <Content Include="_Characters\maid_blue_front_enemy.png" />
     <Content Include="_Characters\maid_blue_front_transparent.png" />
+    <Content Include="_Icons\ItamiIcon.ico" />
     <Content Include="_Music\music.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
