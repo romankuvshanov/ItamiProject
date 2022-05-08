@@ -29,9 +29,29 @@ namespace GameView
 
             string bgFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Backgrounds\\";
             string charFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Characters\\";
+
             Image playerImage = Image.FromFile($"{charFolder}maid_blue_front.png");
             Image playerImageTransparent = Image.FromFile($"{charFolder}maid_blue_front_transparent.png");
             Image enemyImage = Image.FromFile($"{charFolder}maid_blue_front_enemy.png");
+
+            #endregion
+            
+            #region Sounds
+
+            string soundsFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Sounds\\";
+
+            SoundPlayer menuSelectionSound = new SoundPlayer($"{soundsFolder}CURSOL_SELECT.wav");
+            SoundPlayer menuOkSound = new SoundPlayer($"{soundsFolder}CURSOL_OK.wav");
+
+            #endregion
+
+            // Раскоментируйте, чтобы запустить музыку в игре
+            #region Music
+
+            //string musicFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Music\\";
+
+            //SoundPlayer simpleSound = new SoundPlayer($"{musicFolder}music.wav");
+            //simpleSound.PlayLooping();
 
             #endregion
 
@@ -54,24 +74,29 @@ namespace GameView
 
             #region Form controls
 
-            Label introText = new Label();
-            introText.AutoSize = true;
-            introText.Text = "Powered by Pain In The Lower Back\u2122 engine";
-            introText.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Italic);
-            introText.ForeColor = Color.OrangeRed;
-            introText.Left = 15;
-            introText.Top = 15;
+            Label introText = new Label
+            {
+                AutoSize = true,
+                Text = "Powered by Pain In The Lower Back\u2122 engine",
+                Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Italic),
+                ForeColor = Color.OrangeRed,
+                Left = 15,
+                Top = 15
+            };
 
-            Button buttonStart = new Button();
-            buttonStart.Size = new Size(180, 55);
-            buttonStart.Text = "Начать игру?";
-            buttonStart.Font = new Font(FontFamily.GenericMonospace, 12, FontStyle.Bold);
-            buttonStart.BackColor = Color.OrangeRed;
-            buttonStart.ForeColor = Color.Black;
-            buttonStart.Left = (ClientSize.Width - buttonStart.Width) / 2;
-            buttonStart.Top = (ClientSize.Height - buttonStart.Height) / 2;
+            Button buttonStart = new Button
+            {
+                Size = new Size(180, 55),
+                Text = "Начать игру?",
+                Font = new Font(FontFamily.GenericMonospace, 12, FontStyle.Bold),
+                BackColor = Color.OrangeRed,
+                ForeColor = Color.Black,
+                Left = (ClientSize.Width - 180) / 2,
+                Top = (ClientSize.Height - 55) / 2
+            };
             buttonStart.Click += (sender, e) =>
               {
+                  menuOkSound.Play();
                   buttonStart.Visible = false;
                   introText.Visible = false;
                   BackgroundImage = Image.FromFile($"{bgFolder}battleback8.png");
@@ -80,6 +105,7 @@ namespace GameView
               };
             buttonStart.MouseEnter += (sender, e) =>
               {
+                  menuSelectionSound.Play();
                   Cursor = Cursors.Hand;
                   buttonStart.Text = "Начать игру?..";
                   buttonStart.BackColor = Color.Black;
@@ -97,15 +123,6 @@ namespace GameView
             Controls.Add(buttonStart);
 
             #endregion
-
-            // Раскоментируйте, чтобы запустить музыку в игре
-            # region Music
-
-            //string musicFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Music\\";
-            //SoundPlayer simpleSound = new SoundPlayer($"{musicFolder}music.wav");
-            //simpleSound.PlayLooping();
-
-            # endregion
 
             #region Painting
 

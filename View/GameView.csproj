@@ -67,6 +67,8 @@
     <Content Include="_Characters\maid_blue_front_transparent.png" />
     <Content Include="_Icons\ItamiIcon.ico" />
     <Content Include="_Music\music.wav" />
+    <Content Include="_Sounds\CURSOL_OK.wav" />
+    <Content Include="_Sounds\CURSOL_SELECT.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
