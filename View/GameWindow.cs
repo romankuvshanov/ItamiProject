@@ -69,7 +69,6 @@ namespace GameView
                 {
                     gameTimer.Stop();
                     MessageBox.Show("Возник нюанс — в Вас попали", "Game Over");
-                    
                 }
                 else Invalidate();
             };
@@ -98,11 +97,28 @@ namespace GameView
                 Left = (ClientSize.Width - 180) / 2,
                 Top = (ClientSize.Height - 55) / 2
             };
+
+            NumericUpDown livesNumber = new NumericUpDown
+            {
+                Top = buttonStart.Bottom + 15,
+                Left = buttonStart.Left,
+                Minimum = 0,
+                Maximum = 5,
+                Value = 3,
+                Width = buttonStart.Width
+            };
+
+            Controls.Add(introText);
+            Controls.Add(buttonStart);
+            Controls.Add(livesNumber);
+
             buttonStart.Click += (sender, e) =>
               {
                   menuOkSound.Play();
                   buttonStart.Visible = false;
                   introText.Visible = false;
+                  livesNumber.Visible = false;
+                  ctrl.SetPlayerLivesNumber((int)livesNumber.Value);
                   BackgroundImage = Image.FromFile($"{bgFolder}battleback8.png");
                   Focus(); // контролы любят забирать у формы фокус, и его надо отдавать обратно
                   gameTimer.Start();
@@ -123,14 +139,9 @@ namespace GameView
                   buttonStart.ForeColor = Color.Black;
               };
 
-            Controls.Add(introText);
-            Controls.Add(buttonStart);
-
             #endregion
 
             #region Painting
-
-            SolidBrush projectileBrush = new SolidBrush(Color.Red);
 
             Paint += (sender, e) =>
             {
@@ -140,14 +151,12 @@ namespace GameView
                     else e.Graphics.DrawImage(playerImage, game.player.x, game.player.y, 29, 54);
                     e.Graphics.DrawImage(enemyImage, game.enemy.x, game.enemy.y, 29, 54);
                     foreach (var projectile in game.projectiles)
-                        e.Graphics.FillEllipse(projectileBrush, projectile.x, projectile.y, projectile.hitbox, projectile.hitbox);
+                        e.Graphics.FillEllipse(Brushes.Red, projectile.x, projectile.y, projectile.hitbox, projectile.hitbox);
                     for (int i = -1; i < game.player.lifes - 1; i++)
                     {
                         e.Graphics.DrawImage(heartImage, 60 + (29 * i), 30, 29, 29);
-                        
                     }
                 }
-                
             };
 
             #endregion

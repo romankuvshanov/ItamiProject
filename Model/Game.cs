@@ -55,7 +55,7 @@ namespace GameModel
                     if ((DateTime.Now - collisionTime).TotalMilliseconds > 3000)
                     {
                         collisionTime = DateTime.Now;
-                        player.lifes--;                        
+                        player.lifes--;
                     }
                     break;
                 }

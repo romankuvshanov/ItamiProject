@@ -14,6 +14,11 @@ namespace GameController
             keySet = new HashSet<Keys>();
         }
 
+        public void SetPlayerLivesNumber(int amount)
+        {
+            game.player.SetPlayerLivesNumber(amount);
+        }
+
         public void AddKeyToSet(Keys key)
         {
             /*
