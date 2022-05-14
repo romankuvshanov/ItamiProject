@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
+using System;
 namespace GameModel
 {
     public class Game
@@ -10,7 +11,7 @@ namespace GameModel
 
         // Состояния
         public bool shiftIsDown;
-        public bool IsCollisionOccured;
+        public DateTime collisionTime = DateTime.Now;
 
         // Сущности
         public Player player;
@@ -50,10 +51,14 @@ namespace GameModel
                     && projectile.y < player.y + 54
                     && projectile.y + projectile.hitbox > player.y)
                 {
-                    IsCollisionOccured = true;
+                    // Если после попадания не прошло 3 секунды, то повторного попадания нет
+                    if ((DateTime.Now - collisionTime).TotalMilliseconds > 3000)
+                    {
+                        collisionTime = DateTime.Now;
+                        player.lifes--;                        
+                    }
                     break;
                 }
-                else IsCollisionOccured = false;
             }
         }
 

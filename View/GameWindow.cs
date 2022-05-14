@@ -29,10 +29,13 @@ namespace GameView
 
             string bgFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Backgrounds\\";
             string charFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Characters\\";
+            string iconFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Icons\\";
 
             Image playerImage = Image.FromFile($"{charFolder}maid_blue_front.png");
             Image playerImageTransparent = Image.FromFile($"{charFolder}maid_blue_front_transparent.png");
             Image enemyImage = Image.FromFile($"{charFolder}maid_blue_front_enemy.png");
+            Image heartImage = Image.FromFile($"{iconFolder}heart.png");
+            Image wastedImage = Image.FromFile($"{bgFolder}wasted.jpg");
 
             #endregion
             
@@ -62,10 +65,11 @@ namespace GameView
             gameTimer.Tick += (sender, e) =>
             {
                 ctrl.IterateGameCycle();
-                if (game.IsCollisionOccured)
+                if (game.player.lifes < 0)
                 {
                     gameTimer.Stop();
                     MessageBox.Show("Возник нюанс — в Вас попали", "Game Over");
+                    
                 }
                 else Invalidate();
             };
@@ -137,7 +141,13 @@ namespace GameView
                     e.Graphics.DrawImage(enemyImage, game.enemy.x, game.enemy.y, 29, 54);
                     foreach (var projectile in game.projectiles)
                         e.Graphics.FillEllipse(projectileBrush, projectile.x, projectile.y, projectile.hitbox, projectile.hitbox);
+                    for (int i = -1; i < game.player.lifes - 1; i++)
+                    {
+                        e.Graphics.DrawImage(heartImage, 60 + (29 * i), 30, 29, 29);
+                        
+                    }
                 }
+                
             };
 
             #endregion
