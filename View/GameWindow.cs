@@ -48,13 +48,12 @@ namespace GameView
 
             #endregion
 
-            // Раскоментируйте, чтобы запустить музыку в игре
             #region Music
 
-            //string musicFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Music\\";
+            string musicFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Music\\";
 
-            //SoundPlayer simpleSound = new SoundPlayer($"{musicFolder}music.wav");
-            //simpleSound.PlayLooping();
+            SoundPlayer simpleSound = new SoundPlayer($"{musicFolder}music.wav");
+            bool isPlaying = false;
 
             #endregion
 
@@ -173,7 +172,20 @@ namespace GameView
                           Close();
                       else gameTimer.Start();
                   }
-                  ctrl.AddKeyToSet(e.KeyCode);
+                  else if (e.KeyData == Keys.M)
+                  {
+                      if (isPlaying)
+                      {
+                          simpleSound.Stop();
+                          isPlaying = false;
+                      }
+                      else
+                      {
+                          simpleSound.PlayLooping();
+                          isPlaying = true;
+                      }
+                  }
+                  else ctrl.AddKeyToSet(e.KeyCode);
               };
             KeyUp += (sender, e) =>
               {
