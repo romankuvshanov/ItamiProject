@@ -5,18 +5,17 @@ namespace GameController
 {
     public class Controller
     {
-        Game game;
-        HashSet<Keys> keySet;
+        readonly Game _game;
+        readonly HashSet<Keys> _keySet = new HashSet<Keys>();
 
         public Controller(Game game)
         {
-            this.game = game;
-            keySet = new HashSet<Keys>();
+            _game = game;
         }
 
         public void SetPlayerLivesNumber(int amount)
         {
-            game.player.SetPlayerLivesNumber(amount);
+            _game.Player.SetPlayerLivesNumber(amount);
         }
 
         public void AddKeyToSet(Keys key)
@@ -34,24 +33,30 @@ namespace GameController
              * 
              * UPDATE: в тохе проблема такая же, но только в одном направлении
              */
-            if (keySet.Contains(Keys.W) && key == Keys.S) keySet.Remove(Keys.W);
-            else if (keySet.Contains(Keys.S) && key == Keys.W) keySet.Remove(Keys.S);
-            if (keySet.Contains(Keys.A) && key == Keys.D) keySet.Remove(Keys.A);
-            else if (keySet.Contains(Keys.D) && key == Keys.A) keySet.Remove(Keys.D);
-            keySet.Add(key);
+            if (_keySet.Contains(Keys.W) && key == Keys.S) _keySet.Remove(Keys.W);
+            else if (_keySet.Contains(Keys.S) && key == Keys.W) _keySet.Remove(Keys.S);
+            if (_keySet.Contains(Keys.A) && key == Keys.D) _keySet.Remove(Keys.A);
+            else if (_keySet.Contains(Keys.D) && key == Keys.A) _keySet.Remove(Keys.D);
+            _keySet.Add(key);
         }
 
         public void RemoveKeyFromSet(Keys key)
         {
-            keySet.Remove(key);
+            _keySet.Remove(key);
+        }
+
+        public void HandleShift(bool pressed)
+        {
+            if (pressed) _game.ShiftIsDown = true;
+            else _game.ShiftIsDown = false;
         }
 
         public void IterateGameCycle()
         {
-            game.MovePlayer(keySet);
-            game.MoveEnemy();
-            game.MoveProjectiles();
-            game.CheckForCollision();
+            _game.MovePlayer(_keySet);
+            _game.MoveEnemy();
+            _game.MoveProjectiles();
+            _game.CheckForCollision();
         }
     }
 }

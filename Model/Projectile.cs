@@ -2,15 +2,20 @@
 {
     public class Projectile
     {
-        public int hitbox; // радиус хитбокса
-        public int x;
-        public int y;
+        /*
+         * Радиус хитбокса.
+         * 
+         * Возможно, стоит переименовать, либо создать класс специально
+         * для хитбокса, т. к. слово hitbox всё-таки подразумевает... box.
+         */
+        public int Hitbox;
 
-        public Projectile(int hitbox, int x, int y)
+        public int X;
+        public int Y;
+
+        public Projectile(int hitbox)
         {
-            this.hitbox = hitbox;
-            this.x = x;
-            this.y = y;
+            Hitbox = hitbox;
         }
     }
 }

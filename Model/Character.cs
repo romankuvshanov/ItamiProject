@@ -2,15 +2,15 @@
 {
     public class Character
     {
-        public int x;
-        public int y;
-        public int speed;
+        public int X;
+        public int Y;
+        public int Speed;
 
         public Character(int x, int y, int speed)
         {
-            this.x = x;
-            this.y = y;
-            this.speed = speed;
+            X = x;
+            Y = y;
+            Speed = speed;
         }
     }
 }

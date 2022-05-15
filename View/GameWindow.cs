@@ -64,7 +64,7 @@ namespace GameView
             gameTimer.Tick += (sender, e) =>
             {
                 ctrl.IterateGameCycle();
-                if (game.player.lifes < 0)
+                if (game.Player.Lifes < 0)
                 {
                     gameTimer.Stop();
                     MessageBox.Show("Возник нюанс — в Вас попали", "Game Over");
@@ -146,12 +146,12 @@ namespace GameView
             {
                 if (gameTimer.Enabled)
                 {
-                    if (game.shiftIsDown) e.Graphics.DrawImage(playerImageTransparent, game.player.x, game.player.y, 29, 54);
-                    else e.Graphics.DrawImage(playerImage, game.player.x, game.player.y, 29, 54);
-                    e.Graphics.DrawImage(enemyImage, game.enemy.x, game.enemy.y, 29, 54);
-                    foreach (var projectile in game.projectiles)
-                        e.Graphics.FillEllipse(Brushes.Red, projectile.x, projectile.y, projectile.hitbox, projectile.hitbox);
-                    for (int i = -1; i < game.player.lifes - 1; i++)
+                    if (game.ShiftIsDown) e.Graphics.DrawImage(playerImageTransparent, game.Player.X, game.Player.Y, 29, 54);
+                    else e.Graphics.DrawImage(playerImage, game.Player.X, game.Player.Y, 29, 54);
+                    e.Graphics.DrawImage(enemyImage, game.Enemy.X, game.Enemy.Y, 29, 54);
+                    foreach (var projectile in game.Pattern.Projectiles)
+                        e.Graphics.FillEllipse(Brushes.Red, projectile.X, projectile.Y, projectile.Hitbox, projectile.Hitbox);
+                    for (int i = -1; i < game.Player.Lifes - 1; i++)
                     {
                         e.Graphics.DrawImage(heartImage, 60 + (29 * i), 30, 29, 29);
                     }
@@ -172,7 +172,7 @@ namespace GameView
                           Close();
                       else gameTimer.Start();
                   }
-                  else if (e.KeyData == Keys.M)
+                  else if (e.KeyCode == Keys.M)
                   {
                       if (isPlaying)
                       {
@@ -185,11 +185,13 @@ namespace GameView
                           isPlaying = true;
                       }
                   }
+                  else if (e.KeyCode == Keys.ShiftKey) ctrl.HandleShift(true);
                   else ctrl.AddKeyToSet(e.KeyCode);
               };
             KeyUp += (sender, e) =>
               {
-                  ctrl.RemoveKeyFromSet(e.KeyCode);
+                  if (e.KeyCode == Keys.ShiftKey) ctrl.HandleShift(false);
+                  else ctrl.RemoveKeyFromSet(e.KeyCode);
               };
 
             #endregion
