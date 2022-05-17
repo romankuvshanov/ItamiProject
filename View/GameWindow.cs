@@ -12,6 +12,7 @@ namespace GameView
         {
             #region Window settings
 
+            StartPosition = FormStartPosition.CenterScreen;
             ClientSize = new Size(game.Width, game.Height);
             DoubleBuffered = true; // false -> рай эпилептика
             BackColor = Color.Black;
@@ -45,6 +46,7 @@ namespace GameView
 
             SoundPlayer menuSelectionSound = new SoundPlayer($"{soundsFolder}CURSOL_SELECT.wav");
             SoundPlayer menuOkSound = new SoundPlayer($"{soundsFolder}CURSOL_OK.wav");
+            SoundPlayer playerIsHitSound = new SoundPlayer($"{soundsFolder}oof_sound.wav");
 
             #endregion
 
@@ -64,10 +66,11 @@ namespace GameView
             gameTimer.Tick += (sender, e) =>
             {
                 ctrl.IterateGameCycle();
+                if (ctrl.HasCollisionOccured()) playerIsHitSound.Play();
                 if (game.Player.Lifes < 0)
                 {
                     gameTimer.Stop();
-                    MessageBox.Show("Возник нюанс — в Вас попали", "Game Over");
+                    MessageBox.Show("Your free trial of being alive has ended.", "Game Over");
                 }
                 else Invalidate();
             };
@@ -118,6 +121,7 @@ namespace GameView
                   introText.Visible = false;
                   livesNumber.Visible = false;
                   ctrl.SetPlayerLivesNumber((int)livesNumber.Value);
+                  ctrl.StartGame();
                   BackgroundImage = Image.FromFile($"{bgFolder}battleback8.png");
                   Focus(); // контролы любят забирать у формы фокус, и его надо отдавать обратно
                   gameTimer.Start();

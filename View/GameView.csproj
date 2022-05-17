@@ -69,6 +69,7 @@
     <Content Include="_Music\music.wav" />
     <Content Include="_Sounds\CURSOL_OK.wav" />
     <Content Include="_Sounds\CURSOL_SELECT.wav" />
+    <Content Include="_Sounds\oof_sound.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

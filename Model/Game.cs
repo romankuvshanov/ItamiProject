@@ -11,7 +11,7 @@ namespace GameModel
 
         // Состояния
         public bool ShiftIsDown;
-        public DateTime CollisionTime = DateTime.Now;
+        public DateTime _collisionTime;
 
         // Сущности
         public Player Player;
@@ -25,7 +25,12 @@ namespace GameModel
             Pattern = new Pattern(15, 10, Enemy.X + 14, Enemy.Y + 54);
         }
 
-        public void CheckForCollision()
+        public void StartGame()
+        {
+            _collisionTime = DateTime.Now;
+        }
+
+        public bool CheckForCollision()
         {
             foreach (var projectile in Pattern.Projectiles)
             {
@@ -35,14 +40,15 @@ namespace GameModel
                     && projectile.Y + projectile.Hitbox > Player.Y)
                 {
                     // Если после попадания не прошло 3 секунды, то повторного попадания нет
-                    if ((DateTime.Now - CollisionTime).TotalMilliseconds > 3000)
+                    if ((DateTime.Now - _collisionTime).TotalMilliseconds > 3000)
                     {
-                        CollisionTime = DateTime.Now;
+                        _collisionTime = DateTime.Now;
                         Player.Lifes--;
+                        return true;
                     }
-                    break;
                 }
             }
+            return false;
         }
 
         public void MoveProjectiles()

@@ -13,6 +13,16 @@ namespace GameController
             _game = game;
         }
 
+        public bool HasCollisionOccured()
+        {
+            return _game.CheckForCollision();
+        }
+
+        public void StartGame()
+        {
+            _game.StartGame();
+        }
+
         public void SetPlayerLivesNumber(int amount)
         {
             _game.Player.SetPlayerLivesNumber(amount);
@@ -56,7 +66,6 @@ namespace GameController
             _game.MovePlayer(_keySet);
             _game.MoveEnemy();
             _game.MoveProjectiles();
-            _game.CheckForCollision();
         }
     }
 }
