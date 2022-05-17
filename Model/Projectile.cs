@@ -1,4 +1,5 @@
-﻿namespace GameModel
+﻿using System.Numerics;
+namespace GameModel
 {
     public class Projectile
     {
@@ -10,8 +11,7 @@
          */
         public int Hitbox;
 
-        public int X;
-        public int Y;
+        public Vector2 Location;
 
         public Projectile(int hitbox)
         {

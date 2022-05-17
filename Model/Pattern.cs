@@ -1,43 +1,35 @@
 ﻿using System;
+using System.Numerics;
 namespace GameModel
 {
     public class Pattern
     {
         public readonly Projectile[] Projectiles;
 
-        public Pattern(int projectileNumber, int hitbox, int xPosition, int yPosition)
+        public Pattern(int projectileNumber, int hitbox, Vector2 location)
         {
             Projectiles = new Projectile[projectileNumber];
             for (int i = 0; i < projectileNumber; i++) Projectiles[i] = new Projectile(hitbox);
-            SetToStartingPoint(xPosition, yPosition);
+            SetToStartingPoint(location);
         }
 
-        public void SetToStartingPoint(int xPosition, int yPosition)
+        public void SetToStartingPoint(Vector2 location)
         {
             for (int i = 0; i < Projectiles.Length; i++)
             {
-                Projectiles[i].X = xPosition;
-                Projectiles[i].Y = yPosition;
+                Projectiles[i].Location = location;
             }
         }
 
-        /*
-         * NOTE: Возможно, пора перейти на float для координат
-         * игрока, снарядов, врагов и т. д., т. к. целочисленные координаты
-         * частично ограничивают "креативные" возможности.
-         * 
-         * Предлагаю обсудить это :)
-         */
         public void MoveProjectiles()
         {
             double step = 360 / Projectiles.Length;
             double angle = 0;
-            int xSpeed = 5;
-            int ySpeed = 5;
+            float speed = 5;
             for (int i = 0; i < Projectiles.Length; i++)
             {
-                Projectiles[i].X += (int)(xSpeed * Math.Cos(angle));
-                Projectiles[i].Y += (int)(ySpeed * Math.Sin(angle));
+                Projectiles[i].Location.X += (float)(speed * Math.Cos(angle));
+                Projectiles[i].Location.Y += (float)(speed * Math.Sin(angle));
                 angle += step;
             }
         }

@@ -66,7 +66,10 @@ namespace GameView
             gameTimer.Tick += (sender, e) =>
             {
                 ctrl.IterateGameCycle();
+
+                // По какой-то причине (SoundPlayer — помойка) останавливает проигрывание музыки
                 if (ctrl.HasCollisionOccured()) playerIsHitSound.Play();
+
                 if (game.Player.Lifes < 0)
                 {
                     gameTimer.Stop();
@@ -150,11 +153,11 @@ namespace GameView
             {
                 if (gameTimer.Enabled)
                 {
-                    if (game.ShiftIsDown) e.Graphics.DrawImage(playerImageTransparent, game.Player.X, game.Player.Y, 29, 54);
-                    else e.Graphics.DrawImage(playerImage, game.Player.X, game.Player.Y, 29, 54);
-                    e.Graphics.DrawImage(enemyImage, game.Enemy.X, game.Enemy.Y, 29, 54);
+                    if (game.ShiftIsDown) e.Graphics.DrawImage(playerImageTransparent, game.Player.Location.X, game.Player.Location.Y, game.Player.Width, game.Player.Height);
+                    else e.Graphics.DrawImage(playerImage, game.Player.Location.X, game.Player.Location.Y, game.Player.Width, game.Player.Height);
+                    e.Graphics.DrawImage(enemyImage, game.Enemy.Location.X, game.Enemy.Location.Y, game.Enemy.Width, game.Enemy.Height);
                     foreach (var projectile in game.Pattern.Projectiles)
-                        e.Graphics.FillEllipse(Brushes.Red, projectile.X, projectile.Y, projectile.Hitbox, projectile.Hitbox);
+                        e.Graphics.FillEllipse(Brushes.Red, projectile.Location.X, projectile.Location.Y, projectile.Hitbox, projectile.Hitbox);
                     for (int i = -1; i < game.Player.Lifes - 1; i++)
                     {
                         e.Graphics.DrawImage(heartImage, 60 + (29 * i), 30, 29, 29);

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using System;
+using System.Numerics;
 namespace GameModel
 {
     public class Game
@@ -20,9 +21,9 @@ namespace GameModel
 
         public Game()
         {
-            Player = new Player(Width / 2, Height * 3 / 4, 5, -2);
-            Enemy = new Enemy(Width / 2, Height / 4, 4, 1000);
-            Pattern = new Pattern(15, 10, Enemy.X + 14, Enemy.Y + 54);
+            Player = new Player(new Vector2(Width / 2, Height * 5 / 6), 29, 54, 5, -2);
+            Enemy = new Enemy(new Vector2(Width / 2, Height / 6), 29, 54, 4, 1000);
+            Pattern = new Pattern(15, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
         }
 
         public void StartGame()
@@ -34,10 +35,10 @@ namespace GameModel
         {
             foreach (var projectile in Pattern.Projectiles)
             {
-                if (projectile.X < Player.X + 29
-                    && projectile.X + projectile.Hitbox > Player.X
-                    && projectile.Y < Player.Y + 54
-                    && projectile.Y + projectile.Hitbox > Player.Y)
+                if (projectile.Location.X < Player.Location.X + Player.Width
+                    && projectile.Location.X + projectile.Hitbox > Player.Location.X
+                    && projectile.Location.Y < Player.Location.Y + Player.Height
+                    && projectile.Location.Y + projectile.Hitbox > Player.Location.Y)
                 {
                     // Если после попадания не прошло 3 секунды, то повторного попадания нет
                     if ((DateTime.Now - _collisionTime).TotalMilliseconds > 3000)
@@ -55,40 +56,31 @@ namespace GameModel
         {
             foreach (var projectile in Pattern.Projectiles)
             {
-                if (projectile.X + projectile.Hitbox * 2 > 0
-                    && projectile.X < Width
-                    && projectile.Y + projectile.Hitbox * 2 > 0
-                    && projectile.Y < Height)
+                if (projectile.Location.X + projectile.Hitbox * 2 > 0
+                    && projectile.Location.X < Width
+                    && projectile.Location.Y + projectile.Hitbox * 2 > 0
+                    && projectile.Location.Y < Height)
                 {
                     Pattern.MoveProjectiles();
                     return;
                 }
             }
-            Pattern.SetToStartingPoint(Enemy.X + 14, Enemy.Y + 54);
+            Pattern.SetToStartingPoint(Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
         }
 
         public void MoveEnemy()
         {
-            if (Enemy.X > Width * 3 / 4 || Enemy.X < Width / 4) Enemy.Speed = -Enemy.Speed;
-            Enemy.X += Enemy.Speed;
+            if (Enemy.Location.X > Width * 3 / 4 || Enemy.Location.X + Enemy.Width < Width / 4) Enemy.Speed = -Enemy.Speed;
+            Enemy.Location.X += Enemy.Speed;
         }
         
         public void MovePlayer(HashSet<Keys> keySet)
         {
-            if (ShiftIsDown)
-            {
-                if (keySet.Contains(Keys.W) && Player.Y > 0) Player.Y -= Player.Speed + Player.ShiftModifier;
-                if (keySet.Contains(Keys.A) && Player.X > 0) Player.X -= Player.Speed + Player.ShiftModifier;
-                if (keySet.Contains(Keys.S) && Player.Y < Height - 54) Player.Y += Player.Speed + Player.ShiftModifier;
-                if (keySet.Contains(Keys.D) && Player.X < Width - 29) Player.X += Player.Speed + Player.ShiftModifier;
-            }
-            else
-            {
-                if (keySet.Contains(Keys.W) && Player.Y > 0) Player.Y -= Player.Speed;
-                if (keySet.Contains(Keys.A) && Player.X > 0) Player.X -= Player.Speed;
-                if (keySet.Contains(Keys.S) && Player.Y < Height - 54) Player.Y += Player.Speed;
-                if (keySet.Contains(Keys.D) && Player.X < Width - 29) Player.X += Player.Speed;
-            }
+            int speed = ShiftIsDown ? Player.Speed + Player.ShiftModifier : Player.Speed;
+            if (keySet.Contains(Keys.W) && Player.Location.Y > 0) Player.Location.Y -= speed;
+            if (keySet.Contains(Keys.A) && Player.Location.X > 0) Player.Location.X -= speed;
+            if (keySet.Contains(Keys.S) && Player.Location.Y + Player.Height < Height) Player.Location.Y += speed;
+            if (keySet.Contains(Keys.D) && Player.Location.X + Player.Width < Width) Player.Location.X += speed;
         }
     }
 }

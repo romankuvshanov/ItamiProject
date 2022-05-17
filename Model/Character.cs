@@ -1,15 +1,18 @@
-﻿namespace GameModel
+﻿using System.Numerics;
+namespace GameModel
 {
     public class Character
     {
-        public int X;
-        public int Y;
+        public Vector2 Location;
+        public float Width;
+        public float Height;
         public int Speed;
 
-        public Character(int x, int y, int speed)
+        public Character(Vector2 location, float width, float height, int speed)
         {
-            X = x;
-            Y = y;
+            Location = location;
+            Width = width;
+            Height = height;
             Speed = speed;
         }
     }
