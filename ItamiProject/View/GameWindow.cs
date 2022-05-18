@@ -2,13 +2,14 @@
 using System.Media;
 using System.Drawing;
 using System.Windows.Forms;
-using GameModel;
-using GameController;
-namespace GameView
+using Model;
+using Controller;
+
+namespace View
 {
-    public class GameWindow : Form
+    public partial class GameWindow : Form
     {
-        public GameWindow(Game game, Controller ctrl)
+        public GameWindow(Game game, GameController ctrl)
         {
             #region Window settings
 
@@ -17,7 +18,6 @@ namespace GameView
             DoubleBuffered = true; // false -> рай эпилептика
             BackColor = Color.Black;
             Text = "Itami Project";
-            Icon = new Icon($"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Icons\\ItamiIcon.ico");
 
             // TODO: придумать что-то для поддержки разных разрешений(?)
             MinimizeBox = false;
@@ -28,9 +28,9 @@ namespace GameView
 
             #region Images
 
-            string bgFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Backgrounds\\";
-            string charFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Characters\\";
-            string iconFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Icons\\";
+            string bgFolder = $@"{Environment.CurrentDirectory}\..\..\Resources\Backgrounds\";
+            string charFolder = $@"{Environment.CurrentDirectory}\..\..\Resources\Characters\";
+            string iconFolder = $@"{Environment.CurrentDirectory}\..\..\Resources\Icons\";
 
             Image playerImage = Image.FromFile($"{charFolder}maid_blue_front.png");
             Image playerImageTransparent = Image.FromFile($"{charFolder}maid_blue_front_transparent.png");
@@ -39,10 +39,10 @@ namespace GameView
             Image wastedImage = Image.FromFile($"{bgFolder}wasted.jpg");
 
             #endregion
-            
+
             #region Sounds
 
-            string soundsFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Sounds\\";
+            string soundsFolder = $@"{Environment.CurrentDirectory}\..\..\Resources\Sounds\";
 
             SoundPlayer menuSelectionSound = new SoundPlayer($"{soundsFolder}CURSOL_SELECT.wav");
             SoundPlayer menuOkSound = new SoundPlayer($"{soundsFolder}CURSOL_OK.wav");
@@ -52,7 +52,7 @@ namespace GameView
 
             #region Music
 
-            string musicFolder = $"{Environment.CurrentDirectory}\\..\\..\\..\\View\\_Music\\";
+            string musicFolder = $@"{Environment.CurrentDirectory}\..\..\Resources\Music\";
 
             SoundPlayer simpleSound = new SoundPlayer($"{musicFolder}music.wav");
             bool isPlaying = false;
@@ -113,37 +113,60 @@ namespace GameView
                 Width = buttonStart.Width
             };
 
+            ComboBox resolutions = new ComboBox
+            {
+                Top = livesNumber.Bottom + 15,
+                Left = buttonStart.Left,
+                Width = 100
+            };
+
+            resolutions.Items.Add("1920 1080");
+            resolutions.Items.Add("1280 720");
+            resolutions.Items.Add("640 480");
+            resolutions.SelectedItem = resolutions.Items[1];
+
             Controls.Add(introText);
             Controls.Add(buttonStart);
             Controls.Add(livesNumber);
+            Controls.Add(resolutions);
+
+            resolutions.SelectionChangeCommitted += (sender, e) =>
+            {
+                int w = int.Parse(resolutions.SelectedItem.ToString().Split()[0]);
+                int h = int.Parse(resolutions.SelectedItem.ToString().Split()[1]);
+                Size res = new Size(w, h);
+                ClientSize = res;
+
+            };
 
             buttonStart.Click += (sender, e) =>
-              {
-                  menuOkSound.Play();
-                  buttonStart.Visible = false;
-                  introText.Visible = false;
-                  livesNumber.Visible = false;
-                  ctrl.SetPlayerLivesNumber((int)livesNumber.Value);
-                  ctrl.StartGame();
-                  BackgroundImage = Image.FromFile($"{bgFolder}battleback8.png");
-                  Focus(); // контролы любят забирать у формы фокус, и его надо отдавать обратно
-                  gameTimer.Start();
-              };
+            {
+                menuOkSound.Play();
+                buttonStart.Visible = false;
+                introText.Visible = false;
+                livesNumber.Visible = false;
+                resolutions.Visible = false;
+                ctrl.SetPlayerLivesNumber((int)livesNumber.Value);
+                ctrl.StartGame();
+                BackgroundImage = Image.FromFile($"{bgFolder}battleback8.png");
+                Focus(); // контролы любят забирать у формы фокус, и его надо отдавать обратно
+                gameTimer.Start();
+            };
             buttonStart.MouseEnter += (sender, e) =>
-              {
-                  menuSelectionSound.Play();
-                  Cursor = Cursors.Hand;
-                  buttonStart.Text = "Начать игру?..";
-                  buttonStart.BackColor = Color.Black;
-                  buttonStart.ForeColor = Color.DarkRed;
-              };
+            {
+                menuSelectionSound.Play();
+                Cursor = Cursors.Hand;
+                buttonStart.Text = "Начать игру?..";
+                buttonStart.BackColor = Color.Black;
+                buttonStart.ForeColor = Color.DarkRed;
+            };
             buttonStart.MouseLeave += (sender, e) =>
-              {
-                  Cursor = Cursors.Default;
-                  buttonStart.Text = "Начать игру?";
-                  buttonStart.BackColor = Color.OrangeRed;
-                  buttonStart.ForeColor = Color.Black;
-              };
+            {
+                Cursor = Cursors.Default;
+                buttonStart.Text = "Начать игру?";
+                buttonStart.BackColor = Color.OrangeRed;
+                buttonStart.ForeColor = Color.Black;
+            };
 
             #endregion
 
@@ -170,36 +193,36 @@ namespace GameView
             #region Input handling
 
             KeyDown += (sender, e) =>
-              {
-                  if (e.KeyCode == Keys.Escape)
-                  {
-                      gameTimer.Stop();
-                      if (MessageBox.Show("Выйти из игры?", "Выйти?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                      == DialogResult.Yes)
-                          Close();
-                      else gameTimer.Start();
-                  }
-                  else if (e.KeyCode == Keys.M)
-                  {
-                      if (isPlaying)
-                      {
-                          simpleSound.Stop();
-                          isPlaying = false;
-                      }
-                      else
-                      {
-                          simpleSound.PlayLooping();
-                          isPlaying = true;
-                      }
-                  }
-                  else if (e.KeyCode == Keys.ShiftKey) ctrl.HandleShift(true);
-                  else ctrl.AddKeyToSet(e.KeyCode);
-              };
+            {
+                if (e.KeyCode == Keys.Escape)
+                {
+                    gameTimer.Stop();
+                    if (MessageBox.Show("Выйти из игры?", "Выйти?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                    == DialogResult.Yes)
+                        Close();
+                    else gameTimer.Start();
+                }
+                else if (e.KeyCode == Keys.M)
+                {
+                    if (isPlaying)
+                    {
+                        simpleSound.Stop();
+                        isPlaying = false;
+                    }
+                    else
+                    {
+                        simpleSound.PlayLooping();
+                        isPlaying = true;
+                    }
+                }
+                else if (e.KeyCode == Keys.ShiftKey) ctrl.HandleShift(true);
+                else ctrl.AddKeyToSet(e.KeyCode);
+            };
             KeyUp += (sender, e) =>
-              {
-                  if (e.KeyCode == Keys.ShiftKey) ctrl.HandleShift(false);
-                  else ctrl.RemoveKeyFromSet(e.KeyCode);
-              };
+            {
+                if (e.KeyCode == Keys.ShiftKey) ctrl.HandleShift(false);
+                else ctrl.RemoveKeyFromSet(e.KeyCode);
+            };
 
             #endregion
         }

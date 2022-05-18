@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
-namespace GameModel
+
+namespace Model
 {
     public class Character
     {

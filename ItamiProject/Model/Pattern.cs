@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
-namespace GameModel
+
+namespace Model
 {
     public class Pattern
     {

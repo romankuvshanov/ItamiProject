@@ -1,14 +1,16 @@
-﻿using GameModel;
+﻿using Model;
 using System.Collections.Generic;
 using System.Windows.Forms;
-namespace GameController
+
+namespace Controller
 {
-    public class Controller
+    // Test
+    public class GameController
     {
         readonly Game _game;
         readonly HashSet<Keys> _keySet = new HashSet<Keys>();
 
-        public Controller(Game game)
+        public GameController(Game game)
         {
             _game = game;
         }

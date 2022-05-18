@@ -2,7 +2,8 @@
 using System.Windows.Forms;
 using System;
 using System.Numerics;
-namespace GameModel
+
+namespace Model
 {
     public class Game
     {
@@ -23,7 +24,7 @@ namespace GameModel
         {
             Player = new Player(new Vector2(Width / 2, Height * 5 / 6), 29, 54, 5, -2);
             Enemy = new Enemy(new Vector2(Width / 2, Height / 6), 29, 54, 4, 1000);
-            Pattern = new Pattern(15, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+            Pattern = new Pattern(100, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
         }
 
         public void StartGame()
@@ -73,7 +74,7 @@ namespace GameModel
             if (Enemy.Location.X > Width * 3 / 4 || Enemy.Location.X + Enemy.Width < Width / 4) Enemy.Speed = -Enemy.Speed;
             Enemy.Location.X += Enemy.Speed;
         }
-        
+
         public void MovePlayer(HashSet<Keys> keySet)
         {
             int speed = ShiftIsDown ? Player.Speed + Player.ShiftModifier : Player.Speed;
