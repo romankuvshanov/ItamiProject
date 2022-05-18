@@ -4,7 +4,6 @@ using System.Windows.Forms;
 
 namespace Controller
 {
-    // Test
     public class GameController
     {
         readonly Game _game;

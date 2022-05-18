@@ -1,5 +1,4 @@
-﻿using System;
-using System.Media;
+﻿using System.Media;
 using System.Drawing;
 using System.Windows.Forms;
 using Model;
@@ -18,6 +17,7 @@ namespace View
             DoubleBuffered = true; // false -> рай эпилептика
             BackColor = Color.Black;
             Text = "Itami Project";
+            Icon = new Icon(@"Resources\Icons\ItamiIcon.ico");
 
             // TODO: придумать что-то для поддержки разных разрешений(?)
             MinimizeBox = false;
@@ -28,33 +28,25 @@ namespace View
 
             #region Images
 
-            string bgFolder = $@"{Environment.CurrentDirectory}\..\..\Resources\Backgrounds\";
-            string charFolder = $@"{Environment.CurrentDirectory}\..\..\Resources\Characters\";
-            string iconFolder = $@"{Environment.CurrentDirectory}\..\..\Resources\Icons\";
-
-            Image playerImage = Image.FromFile($"{charFolder}maid_blue_front.png");
-            Image playerImageTransparent = Image.FromFile($"{charFolder}maid_blue_front_transparent.png");
-            Image enemyImage = Image.FromFile($"{charFolder}maid_blue_front_enemy.png");
-            Image heartImage = Image.FromFile($"{iconFolder}heart.png");
-            Image wastedImage = Image.FromFile($"{bgFolder}wasted.jpg");
+            Image playerImage = Image.FromFile(@"Resources\Characters\maid_blue_front.png");
+            Image playerImageTransparent = Image.FromFile(@"Resources\Characters\maid_blue_front_transparent.png");
+            Image enemyImage = Image.FromFile(@"Resources\Characters\maid_blue_front_enemy.png");
+            Image heartImage = Image.FromFile(@"Resources\Icons\heart.png");
+            Image wastedImage = Image.FromFile(@"Resources\Backgrounds\wasted.jpg");
 
             #endregion
 
             #region Sounds
 
-            string soundsFolder = $@"{Environment.CurrentDirectory}\..\..\Resources\Sounds\";
-
-            SoundPlayer menuSelectionSound = new SoundPlayer($"{soundsFolder}CURSOL_SELECT.wav");
-            SoundPlayer menuOkSound = new SoundPlayer($"{soundsFolder}CURSOL_OK.wav");
-            SoundPlayer playerIsHitSound = new SoundPlayer($"{soundsFolder}oof_sound.wav");
+            SoundPlayer menuSelectionSound = new SoundPlayer(@"Resources\Sounds\CURSOL_SELECT.wav");
+            SoundPlayer menuOkSound = new SoundPlayer(@"Resources\Sounds\CURSOL_OK.wav");
+            SoundPlayer playerIsHitSound = new SoundPlayer(@"Resources\Sounds\oof_sound.wav");
 
             #endregion
 
             #region Music
 
-            string musicFolder = $@"{Environment.CurrentDirectory}\..\..\Resources\Music\";
-
-            SoundPlayer simpleSound = new SoundPlayer($"{musicFolder}music.wav");
+            SoundPlayer simpleSound = new SoundPlayer(@"Resources\Music\music.wav");
             bool isPlaying = false;
 
             #endregion
@@ -148,7 +140,7 @@ namespace View
                 resolutions.Visible = false;
                 ctrl.SetPlayerLivesNumber((int)livesNumber.Value);
                 ctrl.StartGame();
-                BackgroundImage = Image.FromFile($"{bgFolder}battleback8.png");
+                BackgroundImage = Image.FromFile(@"Resources\Backgrounds\battleback8.png");
                 Focus(); // контролы любят забирать у формы фокус, и его надо отдавать обратно
                 gameTimer.Start();
             };

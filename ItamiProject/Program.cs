@@ -17,7 +17,7 @@ namespace ItamiProject
             Game game = new Game();
             GameController ctrl = new GameController(game);
 
-            Application.EnableVisualStyles();
+            //Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new GameWindow(game, ctrl));
         }
