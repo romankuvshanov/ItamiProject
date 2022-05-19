@@ -13,7 +13,7 @@ namespace Model
 
         // Состояния
         public bool ShiftIsDown;
-        public DateTime _collisionTime;
+        private DateTime _collisionTime;
 
         // Сущности
         public Player Player;
