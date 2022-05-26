@@ -27,14 +27,19 @@ namespace View
         private SoundPlayer playerIsHitSound = new SoundPlayer(@"Resources\Sounds\oof_sound.wav");
         private SoundPlayer music = new SoundPlayer(@"Resources\Music\music.wav");
         private bool isMusicPlaying;
-        
+
         // контролы
-        private Label introText;
+        private FlowLayoutPanel layoutPanel;
+        private Label introLabel;
         private Button buttonStart;
         private NumericUpDown livesNumber;
         private ComboBox resolutions;
+        private ComboBox difficultyLevels;
         private Label scoreLabel;
         private Label enemyHPLabel;
+        private Label livesNumberLabel;
+        private Label resolutionsLabel;
+        private Label difficultyLevelsLabel;
 
         public GameWindow(Game game, GameController ctrl)
         {
@@ -56,31 +61,38 @@ namespace View
 
         private void TimerTick(object sender, EventArgs e)
         {
+            score += timer.Interval - 5;
+            scoreLabel.Text = $"Score: {score:D10}";
             ctrl.IterateGameCycle();
             // По какой-то причине (SoundPlayer — помойка) останавливает проигрывание музыки
             if (ctrl.HasCollisionOccured()) playerIsHitSound.Play();
-            ctrl.HasFireCollisionOccured();
             if (game.Enemy.HP <= 0)
             {
                 timer.Stop();
-                MessageBox.Show("You won.", "Game Over");
+                MessageBox.Show("You won.", "Congratulations!");
             }
-            if (game.Player.Lifes < 0)
+            else if (game.Player.Lives < 0)
             {
                 timer.Stop();
-                MessageBox.Show("Your free trial of being alive has ended.", "Game Over");
+                MessageBox.Show("Your free trial of being alive has ended.", "Game Over...");
             }
             else
             {
-                score += timer.Interval - 5;
-                scoreLabel.Text = $"{score:D10}";
-                enemyHPLabel.Text = $"{"Enemy HP:" + game.Enemy.HP:D15}";
+                enemyHPLabel.Text = $"{"Enemy HP:" + game.Enemy.HP}";
                 Invalidate();
             }
         }
         private void InitializeControls()
         {
-            introText = new Label
+            layoutPanel = new FlowLayoutPanel()
+            {
+                AutoSize = true,
+                FlowDirection = FlowDirection.TopDown,
+                Dock = DockStyle.Right,
+                Visible = false,
+                // BackColor = Color.Transparent | Если сделать так, то начинает страшно лагать
+            };
+            introLabel = new Label
             {
                 AutoSize = true,
                 Text = "Powered by Pain In The Lower Back\u2122 engine",
@@ -104,57 +116,91 @@ namespace View
             buttonStart.MouseLeave += ButtonStart_MouseLeave;
             livesNumber = new NumericUpDown
             {
-                Top = buttonStart.Bottom + 15,
-                Left = buttonStart.Left,
+                Top = introLabel.Bottom + 15,
+                Left = introLabel.Left,
                 Minimum = 0,
                 Maximum = 5,
                 Value = 3,
-                Width = buttonStart.Width
+                Width = 50
             };
             resolutions = new ComboBox
             {
                 Top = livesNumber.Bottom + 15,
-                Left = buttonStart.Left,
-                Width = 100,
+                Left = livesNumber.Left,
+                Width = 80
             };
-            resolutions.Items.Add("1920 1080");
-            resolutions.Items.Add("1280 720");
-            resolutions.Items.Add("640 480");
+            resolutions.Items.AddRange(new string[] { "1920x1080", "1280x720", "640x480" });
             resolutions.SelectedItem = resolutions.Items[1];
             resolutions.SelectionChangeCommitted += Resolutions_SelectionChangeCommitted;
+            difficultyLevels = new ComboBox()
+            {
+                Top = resolutions.Bottom + 15,
+                Left = resolutions.Left,
+                Width = 150
+            };
+            difficultyLevels.Items.AddRange(new string[] { "Toddler", "Average 東方 enjoyer", "ZUN" });
+            difficultyLevels.SelectedItem = difficultyLevels.Items[1];
             scoreLabel = new Label()
             {
                 AutoSize = true,
-                Top = 0,
-                Dock = DockStyle.Right,
-                Text = "0000000000",
-                Font = new Font(FontFamily.GenericSansSerif, 18, FontStyle.Bold),
+                Text = "Score: 0000000000",
+                Font = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold),
                 ForeColor = Color.Orange,
                 BackColor = Color.Black,
-                Visible = false
+                BorderStyle = BorderStyle.FixedSingle,
             };
             enemyHPLabel = new Label()
             {
                 AutoSize = true,
-                Top = 0,
-                Dock = DockStyle.Left,
-                Text = "Enemy HP:0000000000",
-                Font = new Font(FontFamily.GenericSansSerif, 18, FontStyle.Bold),
+                Text = $"Enemy HP:{game.Enemy.HP}",
+                Font = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold),
                 ForeColor = Color.Red,
                 BackColor = Color.Black,
-                Visible = false
+                BorderStyle = BorderStyle.FixedSingle,
             };
-            Controls.Add(introText);
+            livesNumberLabel = new Label()
+            {
+                AutoSize = true,
+                Text = "Кол-во жизней игрока",
+                Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Underline),
+                ForeColor = Color.BlueViolet,
+                Top = livesNumber.Top,
+                Left = livesNumber.Right + 15
+            };
+            resolutionsLabel = new Label()
+            {
+                AutoSize = true,
+                Text = "Разрешение",
+                Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Underline),
+                ForeColor = Color.BlueViolet,
+                Top = resolutions.Top,
+                Left = resolutions.Right + 15
+            };
+            difficultyLevelsLabel = new Label()
+            {
+                AutoSize = true,
+                Text = "Сложность",
+                Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Underline),
+                ForeColor = Color.BlueViolet,
+                Top = difficultyLevels.Top,
+                Left = difficultyLevels.Right + 15
+            };
+            Controls.Add(layoutPanel);
+            Controls.Add(introLabel);
             Controls.Add(buttonStart);
             Controls.Add(livesNumber);
             Controls.Add(resolutions);
-            Controls.Add(scoreLabel);
-            Controls.Add(enemyHPLabel);
+            Controls.Add(difficultyLevels);
+            layoutPanel.Controls.Add(scoreLabel);
+            layoutPanel.Controls.Add(enemyHPLabel);
+            Controls.Add(livesNumberLabel);
+            Controls.Add(resolutionsLabel);
+            Controls.Add(difficultyLevelsLabel);
         }
         private void Resolutions_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            int w = int.Parse(resolutions.SelectedItem.ToString().Split()[0]);
-            int h = int.Parse(resolutions.SelectedItem.ToString().Split()[1]);
+            int w = int.Parse(resolutions.SelectedItem.ToString().Split('x')[0]);
+            int h = int.Parse(resolutions.SelectedItem.ToString().Split('x')[1]);
             Size res = new Size(w, h);
             ClientSize = res;
         }
@@ -173,16 +219,24 @@ namespace View
             buttonStart.BackColor = Color.OrangeRed;
             buttonStart.ForeColor = Color.Black;
         }
+        private void HideUnnecessaryControls()
+        {
+            buttonStart.Visible = false;
+            introLabel.Visible = false;
+            livesNumber.Visible = false;
+            resolutions.Visible = false;
+            difficultyLevels.Visible = false;
+            livesNumberLabel.Visible = false;
+            resolutionsLabel.Visible = false;
+            difficultyLevelsLabel.Visible = false;
+        }
         private void StartGame(object sender, EventArgs e)
         {
             menuOkSound.Play();
-            buttonStart.Visible = false;
-            introText.Visible = false;
-            livesNumber.Visible = false;
-            resolutions.Visible = false;
-            scoreLabel.Visible = true;
-            enemyHPLabel.Visible = true;
+            HideUnnecessaryControls();
+            layoutPanel.Visible = true;
             ctrl.SetPlayerLivesNumber((int)livesNumber.Value);
+            ctrl.SetDifficultyLevel(difficultyLevels.SelectedIndex);
             ctrl.StartGame();
             BackgroundImage = Image.FromFile(@"Resources\Backgrounds\battleback8.png");
             Focus(); // контролы любят забирать у формы фокус, и его надо отдавать обратно
@@ -213,7 +267,7 @@ namespace View
                 }
             }
             else if (e.KeyCode == Keys.ShiftKey) ctrl.HandleShift(true);
-            else if (e.KeyCode == Keys.Space) game.Fire();
+            else if (e.KeyCode == Keys.Space) ctrl.Attack();
             else ctrl.AddKeyToSet(e.KeyCode);
         }
         protected override void OnKeyUp(KeyEventArgs e)
@@ -232,13 +286,13 @@ namespace View
                 e.Graphics.DrawImage(enemyImage, game.Enemy.Location.X, game.Enemy.Location.Y, game.Enemy.Width, game.Enemy.Height);
                 foreach (var projectile in game.Pattern.Projectiles)
                     e.Graphics.FillEllipse(Brushes.Red, projectile.Location.X, projectile.Location.Y, projectile.Hitbox, projectile.Hitbox);
-                for (int i = -1; i < game.Player.Lifes - 1; i++)
+                for (int i = -1; i < game.Player.Lives - 1; i++)
                 {
                     e.Graphics.DrawImage(heartImage, 60 + (29 * i), 30, 29, 29);
                 }
-                foreach (var fireBall in game.FireCoords)
+                foreach (var fireBall in game.PlayerProjectiles)
                 {
-                    e.Graphics.FillEllipse(Brushes.Blue, fireBall.X, fireBall.Y, 20, 20);
+                    e.Graphics.FillEllipse(Brushes.Blue, fireBall.Location.X, fireBall.Location.Y, fireBall.Hitbox, fireBall.Hitbox);
                 }
             }
         }

@@ -13,25 +13,35 @@ namespace Controller
         {
             _game = game;
         }
+        public void StartGame()
+        {
+            _game.Start();
+        }
+
+        public void Attack()
+        {
+            _game.Player.Fire(_game.PlayerProjectiles);
+        }
 
         public bool HasCollisionOccured()
         {
             return _game.CheckForCollision();
         }
 
-        public bool HasFireCollisionOccured()
+        public void SetDifficultyLevel(int index)
         {
-            return _game.CheckForFireCollision();
-        }
-
-        public void StartGame()
-        {
-            _game.StartGame();
+            _game.DifficultyLevel = (Difficulty)index;
         }
 
         public void SetPlayerLivesNumber(int amount)
         {
             _game.Player.SetPlayerLivesNumber(amount);
+        }
+
+        public void HandleShift(bool pressed)
+        {
+            if (pressed) _game.ShiftIsDown = true;
+            else _game.ShiftIsDown = false;
         }
 
         public void AddKeyToSet(Keys key)
@@ -61,18 +71,13 @@ namespace Controller
             _keySet.Remove(key);
         }
 
-        public void HandleShift(bool pressed)
-        {
-            if (pressed) _game.ShiftIsDown = true;
-            else _game.ShiftIsDown = false;
-        }
-
         public void IterateGameCycle()
         {
             _game.MovePlayer(_keySet);
             _game.MoveEnemy();
             _game.MoveProjectiles();
             _game.MoveFires();
+            _game.CheckForFireCollision();
         }
     }
 }

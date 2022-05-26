@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Controller\Controller.cs" />
     <Compile Include="Model\Character.cs" />
+    <Compile Include="Model\DifficultyEnum.cs" />
     <Compile Include="Model\Enemy.cs" />
     <Compile Include="Model\Game.cs" />
     <Compile Include="Model\Pattern.cs" />

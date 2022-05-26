@@ -14,26 +14,64 @@ namespace Model
         // Состояния
         public bool ShiftIsDown;
         private DateTime _collisionTime;
-        private DateTime _collisionTimeFire;
+        public Difficulty DifficultyLevel;
 
         // Сущности
         public Player Player;
         public Enemy Enemy;
         public Pattern Pattern;
-        public List<Vector2> FireCoords;
+        public List<Projectile> PlayerProjectiles;
 
         public Game()
         {
             Player = new Player(new Vector2(Width / 2, Height * 5 / 6), 29, 54, 5, -2);
             Enemy = new Enemy(new Vector2(Width / 2, Height / 6), 29, 54, 4, 1000);
-            Pattern = new Pattern(100, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
-            FireCoords = new List<Vector2>();
+            Pattern = new Pattern(50, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+            PlayerProjectiles = new List<Projectile>();
         }
 
-        public void StartGame()
+        public void Start()
         {
             _collisionTime = DateTime.Now;
-            _collisionTimeFire = DateTime.Now;
+            if (DifficultyLevel == Difficulty.Easy)
+            {
+                Enemy.HP = 500;
+                Pattern = new Pattern(20, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+            }
+            else if (DifficultyLevel == Difficulty.Medium)
+            {
+                Enemy.HP = 1000;
+                Pattern = new Pattern(50, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+            }
+            else if (DifficultyLevel == Difficulty.Hard)
+            {
+                Enemy.HP = 10000;
+                Pattern = new Pattern(100, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+            }
+        }
+
+        public void MoveFires()
+        {
+            for (int i = 0; i < PlayerProjectiles.Count; i++)
+            {
+                PlayerProjectiles[i].Location.Y -= 7;
+                if (PlayerProjectiles[i].Location.Y < 0) PlayerProjectiles.RemoveAt(i);
+            }
+        }
+
+        public void CheckForFireCollision()
+        {
+            foreach (var fireBall in PlayerProjectiles)
+            {
+                if (Math.Abs(fireBall.Location.X - Enemy.Location.X) < fireBall.Hitbox && Math.Abs(fireBall.Location.Y - Enemy.Location.Y) < fireBall.Hitbox)
+                {
+                    /* 
+                     * NOTE: В данмаку у врага не предполагаются 'invincibility frames' после получения урона,
+                     * только у игрока. У врага ОЧЕНЬ много хп, и игрок должен (стараться) попадать по нему всё время.
+                    */
+                    Enemy.HP -= 10;
+                }
+            }
         }
 
         public bool CheckForCollision()
@@ -49,7 +87,7 @@ namespace Model
                     if ((DateTime.Now - _collisionTime).TotalMilliseconds > 3000)
                     {
                         _collisionTime = DateTime.Now;
-                        Player.Lifes--;
+                        Player.Lives--;
                         return true;
                     }
                 }
@@ -86,40 +124,6 @@ namespace Model
             if (keySet.Contains(Keys.A) && Player.Location.X > 0) Player.Location.X -= speed;
             if (keySet.Contains(Keys.S) && Player.Location.Y + Player.Height < Height) Player.Location.Y += speed;
             if (keySet.Contains(Keys.D) && Player.Location.X + Player.Width < Width) Player.Location.X += speed;
-        }
-
-        public void MoveFires()
-        {
-            for (int i = 0; i < FireCoords.Count; i++)
-            {
-                FireCoords[i] = new Vector2(FireCoords[i].X, FireCoords[i].Y - 4);
-                if (FireCoords[i].Y <= 0) FireCoords.RemoveAt(i);
-            }
-        }
-
-        public void Fire()
-        {
-            FireCoords.Add(new Vector2(Player.Location.X, Player.Location.Y));
-        }
-
-        public bool CheckForFireCollision()
-        {
-            foreach (var fireBall in FireCoords)
-            {
-                if (Math.Abs(fireBall.X - Enemy.Location.X) < 50 && Math.Abs(fireBall.Y - Enemy.Location.Y) < 50)
-                {
-                    // Если после попадания не прошло 3 секунды, то повторного попадания нет
-                    if ((DateTime.Now - _collisionTimeFire).TotalMilliseconds > 1000)
-                    {
-                        _collisionTimeFire = DateTime.Now;
-                        Enemy.HP -= 500;
-                        return true;
-                    }
-                    
-                }
-            }
-            MoveFires();
-            return false;
         }
     }
 }
