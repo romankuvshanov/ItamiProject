@@ -14,22 +14,26 @@ namespace Model
         // Состояния
         public bool ShiftIsDown;
         private DateTime _collisionTime;
+        private DateTime _collisionTimeFire;
 
         // Сущности
         public Player Player;
         public Enemy Enemy;
         public Pattern Pattern;
+        public List<Vector2> FireCoords;
 
         public Game()
         {
             Player = new Player(new Vector2(Width / 2, Height * 5 / 6), 29, 54, 5, -2);
             Enemy = new Enemy(new Vector2(Width / 2, Height / 6), 29, 54, 4, 1000);
             Pattern = new Pattern(100, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+            FireCoords = new List<Vector2>();
         }
 
         public void StartGame()
         {
             _collisionTime = DateTime.Now;
+            _collisionTimeFire = DateTime.Now;
         }
 
         public bool CheckForCollision()
@@ -82,6 +86,40 @@ namespace Model
             if (keySet.Contains(Keys.A) && Player.Location.X > 0) Player.Location.X -= speed;
             if (keySet.Contains(Keys.S) && Player.Location.Y + Player.Height < Height) Player.Location.Y += speed;
             if (keySet.Contains(Keys.D) && Player.Location.X + Player.Width < Width) Player.Location.X += speed;
+        }
+
+        public void MoveFires()
+        {
+            for (int i = 0; i < FireCoords.Count; i++)
+            {
+                FireCoords[i] = new Vector2(FireCoords[i].X, FireCoords[i].Y - 4);
+                if (FireCoords[i].Y <= 0) FireCoords.RemoveAt(i);
+            }
+        }
+
+        public void Fire()
+        {
+            FireCoords.Add(new Vector2(Player.Location.X, Player.Location.Y));
+        }
+
+        public bool CheckForFireCollision()
+        {
+            foreach (var fireBall in FireCoords)
+            {
+                if (Math.Abs(fireBall.X - Enemy.Location.X) < 50 && Math.Abs(fireBall.Y - Enemy.Location.Y) < 50)
+                {
+                    // Если после попадания не прошло 3 секунды, то повторного попадания нет
+                    if ((DateTime.Now - _collisionTimeFire).TotalMilliseconds > 1000)
+                    {
+                        _collisionTimeFire = DateTime.Now;
+                        Enemy.HP -= 500;
+                        return true;
+                    }
+                    
+                }
+            }
+            MoveFires();
+            return false;
         }
     }
 }

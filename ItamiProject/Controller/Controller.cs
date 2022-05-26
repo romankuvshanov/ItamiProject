@@ -19,6 +19,11 @@ namespace Controller
             return _game.CheckForCollision();
         }
 
+        public bool HasFireCollisionOccured()
+        {
+            return _game.CheckForFireCollision();
+        }
+
         public void StartGame()
         {
             _game.StartGame();
@@ -67,6 +72,7 @@ namespace Controller
             _game.MovePlayer(_keySet);
             _game.MoveEnemy();
             _game.MoveProjectiles();
+            _game.MoveFires();
         }
     }
 }

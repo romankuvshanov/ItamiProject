@@ -34,6 +34,7 @@ namespace View
         private NumericUpDown livesNumber;
         private ComboBox resolutions;
         private Label scoreLabel;
+        private Label enemyHPLabel;
 
         public GameWindow(Game game, GameController ctrl)
         {
@@ -58,6 +59,12 @@ namespace View
             ctrl.IterateGameCycle();
             // По какой-то причине (SoundPlayer — помойка) останавливает проигрывание музыки
             if (ctrl.HasCollisionOccured()) playerIsHitSound.Play();
+            ctrl.HasFireCollisionOccured();
+            if (game.Enemy.HP <= 0)
+            {
+                timer.Stop();
+                MessageBox.Show("You won.", "Game Over");
+            }
             if (game.Player.Lifes < 0)
             {
                 timer.Stop();
@@ -67,6 +74,7 @@ namespace View
             {
                 score += timer.Interval - 5;
                 scoreLabel.Text = $"{score:D10}";
+                enemyHPLabel.Text = $"{"Enemy HP:" + game.Enemy.HP:D15}";
                 Invalidate();
             }
         }
@@ -125,11 +133,23 @@ namespace View
                 BackColor = Color.Black,
                 Visible = false
             };
+            enemyHPLabel = new Label()
+            {
+                AutoSize = true,
+                Top = 0,
+                Dock = DockStyle.Left,
+                Text = "Enemy HP:0000000000",
+                Font = new Font(FontFamily.GenericSansSerif, 18, FontStyle.Bold),
+                ForeColor = Color.Red,
+                BackColor = Color.Black,
+                Visible = false
+            };
             Controls.Add(introText);
             Controls.Add(buttonStart);
             Controls.Add(livesNumber);
             Controls.Add(resolutions);
             Controls.Add(scoreLabel);
+            Controls.Add(enemyHPLabel);
         }
         private void Resolutions_SelectionChangeCommitted(object sender, EventArgs e)
         {
@@ -161,6 +181,7 @@ namespace View
             livesNumber.Visible = false;
             resolutions.Visible = false;
             scoreLabel.Visible = true;
+            enemyHPLabel.Visible = true;
             ctrl.SetPlayerLivesNumber((int)livesNumber.Value);
             ctrl.StartGame();
             BackgroundImage = Image.FromFile(@"Resources\Backgrounds\battleback8.png");
@@ -192,6 +213,7 @@ namespace View
                 }
             }
             else if (e.KeyCode == Keys.ShiftKey) ctrl.HandleShift(true);
+            else if (e.KeyCode == Keys.Space) game.Fire();
             else ctrl.AddKeyToSet(e.KeyCode);
         }
         protected override void OnKeyUp(KeyEventArgs e)
@@ -213,6 +235,10 @@ namespace View
                 for (int i = -1; i < game.Player.Lifes - 1; i++)
                 {
                     e.Graphics.DrawImage(heartImage, 60 + (29 * i), 30, 29, 29);
+                }
+                foreach (var fireBall in game.FireCoords)
+                {
+                    e.Graphics.FillEllipse(Brushes.Blue, fireBall.X, fireBall.Y, 20, 20);
                 }
             }
         }
