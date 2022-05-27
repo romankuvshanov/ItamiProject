@@ -61,11 +61,11 @@ namespace View
 
         private void TimerTick(object sender, EventArgs e)
         {
-            score += timer.Interval - 5;
+            score += (timer.Interval - 5) * game.ScoreMultiplier;
             scoreLabel.Text = $"Score: {score:D10}";
             ctrl.IterateGameCycle();
-            // По какой-то причине (SoundPlayer — помойка) останавливает проигрывание музыки
-            if (ctrl.HasCollisionOccured()) playerIsHitSound.Play();
+            if (ctrl.WasPlayerHit()) playerIsHitSound.Play(); // По какой-то причине (SoundPlayer — помойка) останавливает проигрывание музыки
+            if (ctrl.WasEnemyHit()) enemyHPLabel.Text = $"{"Enemy HP:" + game.Enemy.HP}";
             if (game.Enemy.HP <= 0)
             {
                 timer.Stop();
@@ -78,7 +78,6 @@ namespace View
             }
             else
             {
-                enemyHPLabel.Text = $"{"Enemy HP:" + game.Enemy.HP}";
                 Invalidate();
             }
         }
@@ -127,7 +126,8 @@ namespace View
             {
                 Top = livesNumber.Bottom + 15,
                 Left = livesNumber.Left,
-                Width = 80
+                Width = 80,
+                DropDownStyle = ComboBoxStyle.DropDownList
             };
             resolutions.Items.AddRange(new string[] { "1920x1080", "1280x720", "640x480" });
             resolutions.SelectedItem = resolutions.Items[1];
@@ -136,14 +136,14 @@ namespace View
             {
                 Top = resolutions.Bottom + 15,
                 Left = resolutions.Left,
-                Width = 150
+                Width = 150,
+                DropDownStyle = ComboBoxStyle.DropDownList
             };
             difficultyLevels.Items.AddRange(new string[] { "Toddler", "Average 東方 enjoyer", "ZUN" });
             difficultyLevels.SelectedItem = difficultyLevels.Items[1];
             scoreLabel = new Label()
             {
                 AutoSize = true,
-                Text = "Score: 0000000000",
                 Font = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold),
                 ForeColor = Color.Orange,
                 BackColor = Color.Black,
@@ -152,7 +152,6 @@ namespace View
             enemyHPLabel = new Label()
             {
                 AutoSize = true,
-                Text = $"Enemy HP:{game.Enemy.HP}",
                 Font = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold),
                 ForeColor = Color.Red,
                 BackColor = Color.Black,
@@ -238,6 +237,7 @@ namespace View
             ctrl.SetPlayerLivesNumber((int)livesNumber.Value);
             ctrl.SetDifficultyLevel(difficultyLevels.SelectedIndex);
             ctrl.StartGame();
+            enemyHPLabel.Text = $"{"Enemy HP:" + game.Enemy.HP}";
             BackgroundImage = Image.FromFile(@"Resources\Backgrounds\battleback8.png");
             Focus(); // контролы любят забирать у формы фокус, и его надо отдавать обратно
             timer.Start();

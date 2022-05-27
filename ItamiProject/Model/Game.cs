@@ -10,11 +10,12 @@ namespace Model
         // Параметры
         public int Width = 1280;
         public int Height = 720;
+        public Difficulty DifficultyLevel;
+        public byte ScoreMultiplier;
 
         // Состояния
         public bool ShiftIsDown;
         private DateTime _collisionTime;
-        public Difficulty DifficultyLevel;
 
         // Сущности
         public Player Player;
@@ -36,17 +37,20 @@ namespace Model
             if (DifficultyLevel == Difficulty.Easy)
             {
                 Enemy.HP = 500;
-                Pattern = new Pattern(20, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+                Pattern = new Pattern(25, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+                ScoreMultiplier = 1;
             }
             else if (DifficultyLevel == Difficulty.Medium)
             {
                 Enemy.HP = 1000;
                 Pattern = new Pattern(50, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+                ScoreMultiplier = 2;
             }
             else if (DifficultyLevel == Difficulty.Hard)
             {
-                Enemy.HP = 10000;
-                Pattern = new Pattern(100, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+                Enemy.HP = 5000;
+                Pattern = new Pattern(250, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+                ScoreMultiplier = 10;
             }
         }
 
@@ -59,19 +63,24 @@ namespace Model
             }
         }
 
-        public void CheckForFireCollision()
+        public bool CheckForFireCollision()
         {
-            foreach (var fireBall in PlayerProjectiles)
+            bool wasHit = false;
+            for (int i = 0; i < PlayerProjectiles.Count; i++)
             {
-                if (Math.Abs(fireBall.Location.X - Enemy.Location.X) < fireBall.Hitbox && Math.Abs(fireBall.Location.Y - Enemy.Location.Y) < fireBall.Hitbox)
+                if (Math.Abs(PlayerProjectiles[i].Location.X - Enemy.Location.X) < PlayerProjectiles[i].Hitbox
+                    && Math.Abs(PlayerProjectiles[i].Location.Y - Enemy.Location.Y) < PlayerProjectiles[i].Hitbox)
                 {
                     /* 
                      * NOTE: В данмаку у врага не предполагаются 'invincibility frames' после получения урона,
                      * только у игрока. У врага ОЧЕНЬ много хп, и игрок должен (стараться) попадать по нему всё время.
                     */
                     Enemy.HP -= 10;
+                    PlayerProjectiles.RemoveAt(i);
+                    wasHit = true;
                 }
             }
+            return wasHit;
         }
 
         public bool CheckForCollision()

@@ -18,12 +18,17 @@ namespace Controller
             _game.Start();
         }
 
+        public bool WasEnemyHit()
+        {
+            return _game.CheckForFireCollision();
+        }
+
         public void Attack()
         {
             _game.Player.Fire(_game.PlayerProjectiles);
         }
 
-        public bool HasCollisionOccured()
+        public bool WasPlayerHit()
         {
             return _game.CheckForCollision();
         }
@@ -77,7 +82,6 @@ namespace Controller
             _game.MoveEnemy();
             _game.MoveProjectiles();
             _game.MoveFires();
-            _game.CheckForFireCollision();
         }
     }
 }
