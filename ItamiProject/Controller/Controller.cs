@@ -20,7 +20,7 @@ namespace Controller
 
         public bool WasEnemyHit()
         {
-            return _game.CheckForFireCollision();
+            return _game.CheckForFireCollision() != 0;
         }
 
         public void Attack()

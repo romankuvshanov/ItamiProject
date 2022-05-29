@@ -63,24 +63,25 @@ namespace Model
             }
         }
 
-        public bool CheckForFireCollision()
+        public int CheckForFireCollision()
         {
-            bool wasHit = false;
-            for (int i = 0; i < PlayerProjectiles.Count; i++)
-            {
-                if (Math.Abs(PlayerProjectiles[i].Location.X - Enemy.Location.X) < PlayerProjectiles[i].Hitbox
-                    && Math.Abs(PlayerProjectiles[i].Location.Y - Enemy.Location.Y) < PlayerProjectiles[i].Hitbox)
-                {
-                    /* 
-                     * NOTE: В данмаку у врага не предполагаются 'invincibility frames' после получения урона,
-                     * только у игрока. У врага ОЧЕНЬ много хп, и игрок должен (стараться) попадать по нему всё время.
-                    */
-                    Enemy.HP -= 10;
-                    PlayerProjectiles.RemoveAt(i);
-                    wasHit = true;
-                }
-            }
-            return wasHit;
+            int removed = PlayerProjectiles.RemoveAll(p => Math.Abs(p.Location.X - Enemy.Location.X) < p.Hitbox&& Math.Abs(p.Location.Y - Enemy.Location.Y) < p.Hitbox);
+            Enemy.HP -= 10 * removed;
+            //for (int i = 0; i < PlayerProjectiles.Count; i++)
+            //{
+            //    if (Math.Abs(PlayerProjectiles[i].Location.X - Enemy.Location.X) < PlayerProjectiles[i].Hitbox
+            //        && Math.Abs(PlayerProjectiles[i].Location.Y - Enemy.Location.Y) < PlayerProjectiles[i].Hitbox)
+            //    {
+            //        /* 
+            //         * NOTE: В данмаку у врага не предполагаются 'invincibility frames' после получения урона,
+            //         * только у игрока. У врага ОЧЕНЬ много хп, и игрок должен (стараться) попадать по нему всё время.
+            //        */
+            //        Enemy.HP -= 10;
+            //        PlayerProjectiles.RemoveAt(i);
+            //        wasHit = true;
+            //    }
+            //}
+            return removed;
         }
 
         public bool CheckForCollision()
