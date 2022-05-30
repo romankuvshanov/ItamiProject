@@ -7,10 +7,10 @@ namespace Model
     {
         public readonly Projectile[] Projectiles;
 
-        public Pattern(int projectileNumber, int hitbox, Vector2 location)
+        public Pattern(int projectileNumber, int diameter, Vector2 location)
         {
             Projectiles = new Projectile[projectileNumber];
-            for (int i = 0; i < projectileNumber; i++) Projectiles[i] = new Projectile(hitbox);
+            for (int i = 0; i < projectileNumber; i++) Projectiles[i] = new Projectile(diameter);
             SetToStartingPoint(location);
         }
 

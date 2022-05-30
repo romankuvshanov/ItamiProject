@@ -1,7 +1,5 @@
 ﻿using System;
-using Model;
 using View;
-using Controller;
 using System.Windows.Forms;
 
 namespace ItamiProject
@@ -14,12 +12,9 @@ namespace ItamiProject
         [STAThread]
         static void Main()
         {
-            Game game = new Game();
-            GameController ctrl = new GameController(game);
-
             //Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new GameWindow(game, ctrl));
+            Application.Run(new GameWindow());
         }
     }
 }

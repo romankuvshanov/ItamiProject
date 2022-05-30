@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\Controller.cs" />
+    <Compile Include="Model\ActionEnum.cs" />
     <Compile Include="Model\Character.cs" />
     <Compile Include="Model\DifficultyEnum.cs" />
     <Compile Include="Model\Enemy.cs" />
@@ -105,7 +106,7 @@
     <Content Include="Resources\Characters\maid_blue_front_transparent.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Icons\heart.png">
+    <Content Include="Resources\Textures\heart.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Icons\ItamiIcon.ico">

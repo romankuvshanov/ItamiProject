@@ -6,7 +6,8 @@ namespace Model
     public class Player : Character
     {
         public int ShiftModifier;
-        public int Lives;
+        public int ExtraLives;
+        public bool IsDead { get; private set; }
 
         public Player(Vector2 location, float width, float height, int speed, int shiftModifier)
             : base(location, width, height, speed)
@@ -14,16 +15,16 @@ namespace Model
             ShiftModifier = shiftModifier;
         }
 
-        public void SetPlayerLivesNumber(int amount)
+        public void Attack(List<Projectile> PlayerProjectiles)
         {
-            Lives = amount;
+            var p = new Projectile(20);
+            p.Location = Location;
+            PlayerProjectiles.Add(p);
         }
 
-        public void Fire(List<Projectile> PlayerProjectiles)
+        public void Die()
         {
-            var proj = new Projectile(20);
-            proj.Location = Location;
-            PlayerProjectiles.Add(proj);
+            IsDead = true;
         }
     }
 }

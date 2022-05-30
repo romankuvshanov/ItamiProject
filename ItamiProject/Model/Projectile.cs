@@ -9,14 +9,16 @@ namespace Model
          * 
          * Возможно, стоит переименовать, либо создать класс специально
          * для хитбокса, т. к. слово hitbox всё-таки подразумевает... box.
+         * 
+         * NOTE: пока переименовал в диаметр
          */
-        public int Hitbox;
+        public int Diameter;
 
         public Vector2 Location;
 
-        public Projectile(int hitbox)
+        public Projectile(int diameter)
         {
-            Hitbox = hitbox;
+            Diameter = diameter;
         }
     }
 }

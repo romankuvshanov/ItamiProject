@@ -1,31 +1,28 @@
 ﻿using Model;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace Controller
 {
     public class GameController
     {
-        readonly Game _game;
-        readonly HashSet<Keys> _keySet = new HashSet<Keys>();
+        private readonly Game _game;
+        private readonly HashSet<PlayerAction> _actionSet = new HashSet<PlayerAction>();
 
         public GameController(Game game)
         {
             _game = game;
         }
-        public void StartGame()
+
+        public void StartGame(int livesAmount, int difficultyIndex)
         {
+            _game.Player.ExtraLives = livesAmount;
+            _game.DifficultyLevel = (Difficulty)difficultyIndex;
             _game.Start();
         }
 
         public bool WasEnemyHit()
         {
-            return _game.CheckForFireCollision();
-        }
-
-        public void Attack()
-        {
-            _game.Player.Fire(_game.PlayerProjectiles);
+            return _game.CheckForFireCollision() != 0;
         }
 
         public bool WasPlayerHit()
@@ -33,52 +30,28 @@ namespace Controller
             return _game.CheckForCollision();
         }
 
-        public void SetDifficultyLevel(int index)
+        public void HandleShift(bool isDown)
         {
-            _game.DifficultyLevel = (Difficulty)index;
-        }
-
-        public void SetPlayerLivesNumber(int amount)
-        {
-            _game.Player.SetPlayerLivesNumber(amount);
-        }
-
-        public void HandleShift(bool pressed)
-        {
-            if (pressed) _game.ShiftIsDown = true;
+            if (isDown) _game.ShiftIsDown = true;
             else _game.ShiftIsDown = false;
         }
 
-        public void AddKeyToSet(Keys key)
+        public void HandleInput(PlayerAction action, bool isDown)
         {
-            /*
-             * Это, чтобы работало так: нажал A с зажатым D -> персонаж, который
-             * движется вправо, сразу начинает двигаться влево
-             * 
-             * Но в таком виде это работает так: персонаж, который
-             * движется вправо, сразу начинает двигаться влево, НО!!!
-             * при отпускании A (со всё ещё зажатым D) движение обратно
-             * вправо не начинается
-             * 
-             * TODO: пофиксить это :) ИЛИ придумать решение получше
-             * 
-             * UPDATE: в тохе проблема такая же, но только в одном направлении
-             */
-            if (_keySet.Contains(Keys.W) && key == Keys.S) _keySet.Remove(Keys.W);
-            else if (_keySet.Contains(Keys.S) && key == Keys.W) _keySet.Remove(Keys.S);
-            if (_keySet.Contains(Keys.A) && key == Keys.D) _keySet.Remove(Keys.A);
-            else if (_keySet.Contains(Keys.D) && key == Keys.A) _keySet.Remove(Keys.D);
-            _keySet.Add(key);
-        }
-
-        public void RemoveKeyFromSet(Keys key)
-        {
-            _keySet.Remove(key);
+            if (isDown)
+            {
+                if (_actionSet.Contains(PlayerAction.MoveU) && action == PlayerAction.MoveD) _actionSet.Remove(PlayerAction.MoveU);
+                else if (_actionSet.Contains(PlayerAction.MoveD) && action == PlayerAction.MoveU) _actionSet.Remove(PlayerAction.MoveD);
+                if (_actionSet.Contains(PlayerAction.MoveL) && action == PlayerAction.MoveR) _actionSet.Remove(PlayerAction.MoveL);
+                else if (_actionSet.Contains(PlayerAction.MoveR) && action == PlayerAction.MoveL) _actionSet.Remove(PlayerAction.MoveR);
+                _actionSet.Add(action);
+            }
+            else _actionSet.Remove(action);
         }
 
         public void IterateGameCycle()
         {
-            _game.MovePlayer(_keySet);
+            _game.SetPlayerToAction(_actionSet);
             _game.MoveEnemy();
             _game.MoveProjectiles();
             _game.MoveFires();

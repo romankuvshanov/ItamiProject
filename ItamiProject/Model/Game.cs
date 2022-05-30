@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Windows.Forms;
 using System;
 using System.Numerics;
 
@@ -11,7 +10,7 @@ namespace Model
         public int Width = 1280;
         public int Height = 720;
         public Difficulty DifficultyLevel;
-        public byte ScoreMultiplier;
+        public byte ScoreMultiplier { get; private set; }
 
         // Состояния
         public bool ShiftIsDown;
@@ -63,24 +62,12 @@ namespace Model
             }
         }
 
-        public bool CheckForFireCollision()
+        public int CheckForFireCollision()
         {
-            bool wasHit = false;
-            for (int i = 0; i < PlayerProjectiles.Count; i++)
-            {
-                if (Math.Abs(PlayerProjectiles[i].Location.X - Enemy.Location.X) < PlayerProjectiles[i].Hitbox
-                    && Math.Abs(PlayerProjectiles[i].Location.Y - Enemy.Location.Y) < PlayerProjectiles[i].Hitbox)
-                {
-                    /* 
-                     * NOTE: В данмаку у врага не предполагаются 'invincibility frames' после получения урона,
-                     * только у игрока. У врага ОЧЕНЬ много хп, и игрок должен (стараться) попадать по нему всё время.
-                    */
-                    Enemy.HP -= 10;
-                    PlayerProjectiles.RemoveAt(i);
-                    wasHit = true;
-                }
-            }
-            return wasHit;
+            int hits = PlayerProjectiles.RemoveAll(p => Math.Abs(p.Location.X - Enemy.Location.X) < p.Diameter
+                    && Math.Abs(p.Location.Y - Enemy.Location.Y) < p.Diameter);
+            Enemy.HP -= 10 * hits;
+            return hits;
         }
 
         public bool CheckForCollision()
@@ -88,15 +75,15 @@ namespace Model
             foreach (var projectile in Pattern.Projectiles)
             {
                 if (projectile.Location.X < Player.Location.X + Player.Width
-                    && projectile.Location.X + projectile.Hitbox > Player.Location.X
+                    && projectile.Location.X + projectile.Diameter > Player.Location.X
                     && projectile.Location.Y < Player.Location.Y + Player.Height
-                    && projectile.Location.Y + projectile.Hitbox > Player.Location.Y)
+                    && projectile.Location.Y + projectile.Diameter > Player.Location.Y)
                 {
                     // Если после попадания не прошло 3 секунды, то повторного попадания нет
                     if ((DateTime.Now - _collisionTime).TotalMilliseconds > 3000)
                     {
                         _collisionTime = DateTime.Now;
-                        Player.Lives--;
+                        if (--Player.ExtraLives == -1) Player.Die();
                         return true;
                     }
                 }
@@ -108,9 +95,9 @@ namespace Model
         {
             foreach (var projectile in Pattern.Projectiles)
             {
-                if (projectile.Location.X + projectile.Hitbox * 2 > 0
+                if (projectile.Location.X + projectile.Diameter > 0
                     && projectile.Location.X < Width
-                    && projectile.Location.Y + projectile.Hitbox * 2 > 0
+                    && projectile.Location.Y + projectile.Diameter > 0
                     && projectile.Location.Y < Height)
                 {
                     Pattern.MoveProjectiles();
@@ -126,13 +113,14 @@ namespace Model
             Enemy.Location.X += Enemy.Speed;
         }
 
-        public void MovePlayer(HashSet<Keys> keySet)
+        public void SetPlayerToAction(HashSet<PlayerAction> actionSet)
         {
             int speed = ShiftIsDown ? Player.Speed + Player.ShiftModifier : Player.Speed;
-            if (keySet.Contains(Keys.W) && Player.Location.Y > 0) Player.Location.Y -= speed;
-            if (keySet.Contains(Keys.A) && Player.Location.X > 0) Player.Location.X -= speed;
-            if (keySet.Contains(Keys.S) && Player.Location.Y + Player.Height < Height) Player.Location.Y += speed;
-            if (keySet.Contains(Keys.D) && Player.Location.X + Player.Width < Width) Player.Location.X += speed;
+            if (actionSet.Contains(PlayerAction.MoveU) && Player.Location.Y > 0) Player.Location.Y -= speed;
+            if (actionSet.Contains(PlayerAction.MoveL) && Player.Location.X > 0) Player.Location.X -= speed;
+            if (actionSet.Contains(PlayerAction.MoveD) && Player.Location.Y + Player.Height < Height) Player.Location.Y += speed;
+            if (actionSet.Contains(PlayerAction.MoveR) && Player.Location.X + Player.Width < Width) Player.Location.X += speed;
+            if (actionSet.Contains(PlayerAction.Attack)) Player.Attack(PlayerProjectiles);
         }
     }
 }
