@@ -35,6 +35,7 @@ namespace View
         // контролы
         private Label _introLbl;
         private Button _btnStart;
+        private Button _btnExit;
         private NumericUpDown _livesNumericUD;
         private Label _livesNumberLbl;
         private ComboBox _resolutionsComboB;
@@ -46,6 +47,7 @@ namespace View
         private FlowLayoutPanel _flowLayoutPanel;
         private Label _scoreLbl;
         private Label _enemyHPLbl;
+        private Label _pauseLbl;
 
         public GameWindow()
         {
@@ -67,11 +69,17 @@ namespace View
 
         private void TimerTick(object sender, EventArgs e)
         {
-            _score += (_gameTimer.Interval - 5) * _game.ScoreMultiplier;
-            _scoreLbl.Text = $"Score: {_score:D10}";
             _ctrl.IterateGameCycle();
-            if (_ctrl.WasPlayerHit()) _playerIsHitSnd.Play(); // По какой-то причине (SoundPlayer — помойка) останавливает проигрывание музыки
-            if (_ctrl.WasEnemyHit()) _enemyHPLbl.Text = $"{"Enemy HP:" + _game.Enemy.HP}";
+            if (_ctrl.WasPlayerHit())
+            {
+                _playerIsHitSnd.Play(); // По какой-то причине (SoundPlayer — помойка) останавливает проигрывание музыки
+            }
+            if (_ctrl.WasEnemyHit())
+            {
+                _enemyHPLbl.Text = $"{"Enemy HP:" + _game.Enemy.HP}";
+                _score += 10 * _game.ScoreMultiplier;
+                _scoreLbl.Text = $"Score: {_score:D10}";
+            }
             if (_game.Enemy.HP <= 0)
             {
                 _gameTimer.Stop();
@@ -100,7 +108,7 @@ namespace View
             _btnStart = new Button
             {
                 Size = new Size(180, 55),
-                Text = "Начать игру?",
+                Text = "Начать игру",
                 Font = new Font(FontFamily.GenericMonospace, 12, FontStyle.Bold),
                 BackColor = Color.OrangeRed,
                 ForeColor = Color.Black,
@@ -110,6 +118,19 @@ namespace View
             _btnStart.Click += StartGame;
             _btnStart.MouseEnter += ButtonStart_MouseEnter;
             _btnStart.MouseLeave += ButtonStart_MouseLeave;
+            _btnExit = new Button()
+            {
+                Size = _btnStart.Size,
+                Text = "Выйти из игры",
+                Font = _btnStart.Font,
+                BackColor = _btnStart.BackColor,
+                ForeColor = Color.SkyBlue,
+                Left = _btnStart.Left,
+                Top = _btnStart.Bottom + verticalPadding,
+            };
+            _btnExit.Click += (object sender, EventArgs e) => Close();
+            _btnExit.MouseEnter += _btnExit_MouseEnter;
+            _btnExit.MouseLeave += _btnExit_MouseLeave;
             _livesNumericUD = new NumericUpDown
             {
                 Top = _introLbl.Bottom + verticalPadding,
@@ -120,7 +141,7 @@ namespace View
                 Width = 50,
                 ReadOnly = true
             };
-            _livesNumberLbl = new Label()
+            _livesNumberLbl = new Label
             {
                 AutoSize = true,
                 Text = "Доп. жизни",
@@ -139,7 +160,7 @@ namespace View
             _resolutionsComboB.Items.AddRange(new string[] { "1920x1080", "1280x720", "640x480" });
             _resolutionsComboB.SelectedItem = _resolutionsComboB.Items[1];
             _resolutionsComboB.SelectionChangeCommitted += Resolutions_SelectionChangeCommitted;
-            _resolutionsLbl = new Label()
+            _resolutionsLbl = new Label
             {
                 AutoSize = true,
                 Text = "Разрешение",
@@ -148,7 +169,7 @@ namespace View
                 Top = _resolutionsComboB.Top,
                 Left = _resolutionsComboB.Right + horizontalPadding
             };
-            _difficultiesComboB = new ComboBox()
+            _difficultiesComboB = new ComboBox
             {
                 Top = _resolutionsComboB.Bottom + verticalPadding,
                 Left = _resolutionsComboB.Left,
@@ -157,7 +178,7 @@ namespace View
             };
             _difficultiesComboB.Items.AddRange(new string[] { "Toddler", "Average 東方 enjoyer", "ZUN" });
             _difficultiesComboB.SelectedItem = _difficultiesComboB.Items[1];
-            _difficultyLbl = new Label()
+            _difficultyLbl = new Label
             {
                 AutoSize = true,
                 Text = "Сложность",
@@ -166,7 +187,7 @@ namespace View
                 Top = _difficultiesComboB.Top,
                 Left = _difficultiesComboB.Right + horizontalPadding
             };
-            _keysLayoutComboB = new ComboBox()
+            _keysLayoutComboB = new ComboBox
             {
                 Top = _difficultiesComboB.Bottom + verticalPadding,
                 Left = _difficultiesComboB.Left,
@@ -184,7 +205,7 @@ namespace View
                 Top = _keysLayoutComboB.Top,
                 Left = _keysLayoutComboB.Right + horizontalPadding
             };
-            _flowLayoutPanel = new FlowLayoutPanel()
+            _flowLayoutPanel = new FlowLayoutPanel
             {
                 AutoSize = true,
                 FlowDirection = FlowDirection.TopDown,
@@ -192,7 +213,7 @@ namespace View
                 Visible = false
                 // BackColor = Color.Transparent | Если сделать так, то начинает страшно лагать
             };
-            _scoreLbl = new Label()
+            _scoreLbl = new Label
             {
                 AutoSize = true,
                 Font = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold),
@@ -200,7 +221,7 @@ namespace View
                 BackColor = Color.Black,
                 BorderStyle = BorderStyle.FixedSingle,
             };
-            _enemyHPLbl = new Label()
+            _enemyHPLbl = new Label
             {
                 AutoSize = true,
                 Font = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold),
@@ -208,8 +229,19 @@ namespace View
                 BackColor = Color.Black,
                 BorderStyle = BorderStyle.FixedSingle,
             };
+            _pauseLbl = new Label
+            {
+                AutoSize = true,
+                Font = new Font(FontFamily.GenericMonospace, 40, FontStyle.Bold),
+                ForeColor = Color.Red,
+                BackColor = Color.Transparent,
+                Text = "PAUSE",
+                Visible = false,
+                Location = _btnStart.Location,
+            };
             Controls.Add(_introLbl);
             Controls.Add(_btnStart);
+            Controls.Add(_btnExit);
             Controls.Add(_livesNumericUD);
             Controls.Add(_livesNumberLbl);
             Controls.Add(_resolutionsComboB);
@@ -221,6 +253,18 @@ namespace View
             Controls.Add(_flowLayoutPanel);
             _flowLayoutPanel.Controls.Add(_scoreLbl);
             _flowLayoutPanel.Controls.Add(_enemyHPLbl);
+            Controls.Add(_pauseLbl);
+        }
+        private void _btnExit_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+            _btnExit.BackColor = _btnStart.BackColor;
+        }
+        private void _btnExit_MouseEnter(object sender, EventArgs e)
+        {
+            _menuSelectionSnd.Play();
+            Cursor = Cursors.Hand;
+            _btnExit.BackColor = Color.Black;
         }
         private void Resolutions_SelectionChangeCommitted(object sender, EventArgs e)
         {
@@ -240,7 +284,7 @@ namespace View
         private void ButtonStart_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
-            _btnStart.Text = "Начать игру?";
+            _btnStart.Text = "Начать игру";
             _btnStart.BackColor = Color.OrangeRed;
             _btnStart.ForeColor = Color.Black;
         }
@@ -266,6 +310,7 @@ namespace View
         private void HideUnnecessaryControls()
         {
             _btnStart.Visible = false;
+            _btnExit.Visible = false;
             _introLbl.Visible = false;
             _livesNumericUD.Visible = false;
             _resolutionsComboB.Visible = false;
@@ -284,6 +329,7 @@ namespace View
             _flowLayoutPanel.Visible = true;
             _ctrl.StartGame((int)_livesNumericUD.Value, _difficultiesComboB.SelectedIndex);
             _enemyHPLbl.Text = $"{"Enemy HP:" + _game.Enemy.HP}";
+            _scoreLbl.Text = "Score: 0000000000";
             BackgroundImage = _bgImg;
             Focus(); // контролы любят забирать у формы фокус, и его надо отдавать обратно
             _gameTimer.Start();
@@ -295,10 +341,19 @@ namespace View
             {
                 case Keys.P:
                     // TODO: ДОДЕЛАТЬ
-                    if(_gameTimer.Enabled) _gameTimer.Stop();
-                    else _gameTimer.Start();
+                    if (_gameTimer.Enabled)
+                    {
+                        _gameTimer.Stop();
+                        _pauseLbl.Visible = true;
+                    }
+                    else
+                    {
+                        _gameTimer.Start();
+                        _pauseLbl.Visible = false;
+                    }
                     break;
                 case Keys.Escape:
+                    // TODO: ЗАСУНУТЬ СЮДА ВЫЗОВ СОБЫТИЯ НАЖАТИЯ КНОПКИ ВЫХОДА (потом)
                     _gameTimer.Stop();
                     if (MessageBox.Show("Выйти из игры?", "Выйти?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                     == DialogResult.Yes) Close();
@@ -332,23 +387,40 @@ namespace View
         }
         protected override void OnPaint(PaintEventArgs e)
         {
+            // NOTE: ЖИЗНИ ВРЕМЕННО НЕ РИСУЮТСЯ
             base.OnPaint(e);
             if (_gameTimer.Enabled)
             {
-                if (_game.ShiftIsDown) e.Graphics.DrawImage(_playerImgTransp, _game.Player.Location.X, _game.Player.Location.Y, _game.Player.Width, _game.Player.Height);
-                else e.Graphics.DrawImage(_playerImg, _game.Player.Location.X, _game.Player.Location.Y, _game.Player.Width, _game.Player.Height);
-                e.Graphics.DrawImage(_enemyImg, _game.Enemy.Location.X, _game.Enemy.Location.Y, _game.Enemy.Width, _game.Enemy.Height);
-                foreach (var projectile in _game.Pattern.Projectiles)
-                    e.Graphics.FillEllipse(Brushes.Red, projectile.Location.X, projectile.Location.Y, projectile.Diameter, projectile.Diameter);
-                for (int i = -1; i < _game.Player.ExtraLives - 1; i++)
-                {
-                    e.Graphics.DrawImage(_heartImg, 60 + (_heartImg.Width * i), 30, _heartImg.Width, _heartImg.Height);
-                }
-                foreach (var fireBall in _game.PlayerProjectiles)
-                {
-                    e.Graphics.FillEllipse(Brushes.Blue, fireBall.Location.X, fireBall.Location.Y, fireBall.Diameter, fireBall.Diameter);
-                }
+                DrawPlayer(e);
+                DrawPlayerProjectiles(e);
+                DrawEnemy(e);
+                DrawEnemyProjectiles(e);
             }
+        }
+        private void DrawPlayer(PaintEventArgs e)
+        {
+            if (_game.ShiftIsDown) e.Graphics.DrawImage(_playerImgTransp, _game.Player.Location.X, _game.Player.Location.Y, _game.Player.Width, _game.Player.Height);
+            else e.Graphics.DrawImage(_playerImg, _game.Player.Location.X, _game.Player.Location.Y, _game.Player.Width, _game.Player.Height);
+        }
+        private void DrawPlayerProjectiles(PaintEventArgs e)
+        {
+            foreach (var fireBall in _game.PlayerProjectiles)
+                e.Graphics.FillEllipse(Brushes.Blue, fireBall.Location.X, fireBall.Location.Y, fireBall.Diameter, fireBall.Diameter);
+        }
+        private void DrawPlayersLives(PaintEventArgs e)
+        {
+            // NOTE: ВРЕМЕННО НЕ ИСПОЛЬЗУЕТСЯ
+            for (int i = 0; i < _game.Player.ExtraLives; i++)
+                e.Graphics.DrawImage(_heartImg, 60 + (_heartImg.Width * i), 30, _heartImg.Width, _heartImg.Height);
+        }
+        private void DrawEnemy(PaintEventArgs e)
+        {
+            e.Graphics.DrawImage(_enemyImg, _game.Enemy.Location.X, _game.Enemy.Location.Y, _game.Enemy.Width, _game.Enemy.Height);
+        }
+        private void DrawEnemyProjectiles(PaintEventArgs e)
+        {
+            foreach (var projectile in _game.Pattern.Projectiles)
+                e.Graphics.FillEllipse(Brushes.Red, projectile.Location.X, projectile.Location.Y, projectile.Diameter, projectile.Diameter);
         }
     }
 }
