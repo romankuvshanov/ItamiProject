@@ -15,6 +15,7 @@ namespace Model
         // Состояния
         public bool ShiftIsDown;
         private DateTime _collisionTime;
+        private DateTime _occuredTime;
 
         // Сущности
         public Player Player;
@@ -33,6 +34,7 @@ namespace Model
         public void Start()
         {
             _collisionTime = DateTime.Now;
+            _occuredTime = DateTime.Now;
             if (DifficultyLevel == Difficulty.Easy)
             {
                 Enemy.HP = 100;
@@ -64,9 +66,23 @@ namespace Model
 
         public int CheckForFireCollision()
         {
+            // Здесь наш классный алгоритм, который требовался
             int hits = PlayerProjectiles.RemoveAll(p => Math.Abs(p.Location.X - Enemy.Location.X) < p.Diameter
                     && Math.Abs(p.Location.Y - Enemy.Location.Y) < p.Diameter);
             Enemy.HP -= 10 * hits;
+
+            // Теперь враг убегает от игрока при попадании
+            if (hits > 0)
+            {
+                if (Enemy.Speed > 0) Enemy.Speed = 25;
+                else Enemy.Speed = -25;
+            }
+            else
+            {
+                if (Enemy.Speed > 0) Enemy.Speed = 4;
+                else Enemy.Speed = -4;
+            }
+
             return hits;
         }
 
@@ -110,7 +126,7 @@ namespace Model
         public void MoveEnemy()
         {
             if (Enemy.Location.X > Width * 3 / 4 || Enemy.Location.X + Enemy.Width < Width / 4) Enemy.Speed = -Enemy.Speed;
-            Enemy.Location.X += Enemy.Speed;
+            Enemy.Location.X += Enemy.Speed;            
         }
 
         public void SetPlayerToAction(HashSet<PlayerAction> actionSet)
