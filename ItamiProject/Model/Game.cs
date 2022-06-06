@@ -35,7 +35,7 @@ namespace Model
             _collisionTime = DateTime.Now;
             if (DifficultyLevel == Difficulty.Easy)
             {
-                Enemy.HP = 500;
+                Enemy.HP = 100;
                 Pattern = new Pattern(25, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
                 ScoreMultiplier = 1;
             }

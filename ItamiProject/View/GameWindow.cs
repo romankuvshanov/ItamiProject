@@ -83,12 +83,33 @@ namespace View
             if (_game.Enemy.HP <= 0)
             {
                 _gameTimer.Stop();
-                MessageBox.Show("You won.", "Congratulations!");
+                var result = MessageBox.Show("Вы выиграли. Вернуться в главное меню?", "Вы выиграли!",
+                                 MessageBoxButtons.YesNo,
+                                 MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    Application.Restart();
+                }
+                else if (result == DialogResult.No)
+                {
+                    Application.Exit();
+                }
+                
             }
             else if (_game.Player.IsDead)
             {
                 _gameTimer.Stop();
-                MessageBox.Show("Your free trial of being alive has ended.", "Game Over...");
+                var result = MessageBox.Show("Вы проиграли. Вернуться в главное меню?", "Вы проиграли!",
+                                 MessageBoxButtons.YesNo,
+                                 MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    Application.Restart();
+                }
+                else if (result == DialogResult.No)
+                {
+                    Application.Exit();
+                }
             }
             else Invalidate();
         }
