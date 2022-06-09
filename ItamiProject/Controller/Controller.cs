@@ -22,12 +22,12 @@ namespace Controller
 
         public bool WasEnemyHit()
         {
-            return _game.CheckForFireCollision() != 0;
+            return _game.CheckFireCollision() != 0;
         }
 
         public bool WasPlayerHit()
         {
-            return _game.CheckForCollision();
+            return _game.CheckCollision();
         }
 
         public void HandleShift(bool isDown)
@@ -49,9 +49,9 @@ namespace Controller
             else _actionSet.Remove(action);
         }
 
-        public void IterateGameCycle()
+        public void IterateGameCycle(int elapsedTime)
         {
-            _game.SetPlayerToAction(_actionSet);
+            _game.SetPlayerToAction(_actionSet, elapsedTime);
             _game.MoveEnemy();
             _game.MoveProjectiles();
             _game.MoveFires();

@@ -7,8 +7,8 @@ namespace Model
     public class Game
     {
         // Параметры
-        public int Width = 1280;
-        public int Height = 720;
+        public int Width = 768;
+        public int Height = 576;
         public Difficulty DifficultyLevel;
         public byte ScoreMultiplier { get; private set; }
 
@@ -25,9 +25,19 @@ namespace Model
 
         public Game()
         {
-            Player = new Player(new Vector2(Width / 2, Height * 5 / 6), 29, 54, 5, -2);
-            Enemy = new Enemy(new Vector2(Width / 2, Height / 6), 29, 54, 4, 1000);
-            Pattern = new Pattern(50, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+            Player = new Player(new Vector2(Width / 2, Height * 5 / 6),
+                29,
+                54,
+                4,
+                -2);
+            Enemy = new Enemy(new Vector2(Width / 2, Height / 6),
+                29,
+                54,
+                4,
+                1000);
+            Pattern = new Pattern(50,
+                10,
+                Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
             PlayerProjectiles = new List<Projectile>();
         }
 
@@ -35,23 +45,25 @@ namespace Model
         {
             _collisionTime = DateTime.Now;
             _occuredTime = DateTime.Now;
-            if (DifficultyLevel == Difficulty.Easy)
+            switch (DifficultyLevel)
             {
-                Enemy.HP = 100;
-                Pattern = new Pattern(25, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
-                ScoreMultiplier = 1;
-            }
-            else if (DifficultyLevel == Difficulty.Medium)
-            {
-                Enemy.HP = 1000;
-                Pattern = new Pattern(50, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
-                ScoreMultiplier = 2;
-            }
-            else if (DifficultyLevel == Difficulty.Hard)
-            {
-                Enemy.HP = 5000;
-                Pattern = new Pattern(250, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
-                ScoreMultiplier = 10;
+                case Difficulty.Easy:
+                    Enemy.HP = 100;
+                    Pattern = new Pattern(25, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+                    ScoreMultiplier = 1;
+                    break;
+                case Difficulty.Medium:
+                    Enemy.HP = 1000;
+                    Pattern = new Pattern(50, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+                    ScoreMultiplier = 2;
+                    break;
+                case Difficulty.Hard:
+                    Enemy.HP = 5000;
+                    Pattern = new Pattern(250, 10, Enemy.Location + new Vector2(Enemy.Width / 2, Enemy.Height));
+                    ScoreMultiplier = 10;
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -60,11 +72,11 @@ namespace Model
             for (int i = 0; i < PlayerProjectiles.Count; i++)
             {
                 PlayerProjectiles[i].Location.Y -= 7;
-                if (PlayerProjectiles[i].Location.Y < 0) PlayerProjectiles.RemoveAt(i);
+                if (PlayerProjectiles[i].Location.Y < 0) PlayerProjectiles.RemoveAt(i--);
             }
         }
 
-        public int CheckForFireCollision()
+        public int CheckFireCollision()
         {
             // Здесь наш классный алгоритм, который требовался
             int hits = PlayerProjectiles.RemoveAll(p => Math.Abs(p.Location.X - Enemy.Location.X) < p.Diameter
@@ -82,11 +94,10 @@ namespace Model
                 if (Enemy.Speed > 0) Enemy.Speed = 4;
                 else Enemy.Speed = -4;
             }
-
             return hits;
         }
 
-        public bool CheckForCollision()
+        public bool CheckCollision()
         {
             foreach (var projectile in Pattern.Projectiles)
             {
@@ -125,18 +136,18 @@ namespace Model
 
         public void MoveEnemy()
         {
-            if (Enemy.Location.X > Width * 3 / 4 || Enemy.Location.X + Enemy.Width < Width / 4) Enemy.Speed = -Enemy.Speed;
-            Enemy.Location.X += Enemy.Speed;            
+            //if (Enemy.Location.X > Width * 3 / 4 || Enemy.Location.X + Enemy.Width < Width / 4) Enemy.Speed = -Enemy.Speed;
+            //Enemy.Location.X += Enemy.Speed;
         }
 
-        public void SetPlayerToAction(HashSet<PlayerAction> actionSet)
+        public void SetPlayerToAction(HashSet<PlayerAction> actionSet, int elapsedTime)
         {
             int speed = ShiftIsDown ? Player.Speed + Player.ShiftModifier : Player.Speed;
             if (actionSet.Contains(PlayerAction.MoveU) && Player.Location.Y > 0) Player.Location.Y -= speed;
             if (actionSet.Contains(PlayerAction.MoveL) && Player.Location.X > 0) Player.Location.X -= speed;
             if (actionSet.Contains(PlayerAction.MoveD) && Player.Location.Y + Player.Height < Height) Player.Location.Y += speed;
             if (actionSet.Contains(PlayerAction.MoveR) && Player.Location.X + Player.Width < Width) Player.Location.X += speed;
-            if (actionSet.Contains(PlayerAction.Attack)) Player.Attack(PlayerProjectiles);
+            if (actionSet.Contains(PlayerAction.Attack) && elapsedTime % 150 == 0) Player.Attack(PlayerProjectiles);
         }
     }
 }
