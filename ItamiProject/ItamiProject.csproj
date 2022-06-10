@@ -58,6 +58,12 @@
     <Compile Include="Model\Projectile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="View\LeaderboardWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\LeaderboardWindow.Designer.cs">
+      <DependentUpon>LeaderboardWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\GameWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -104,6 +110,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Characters\maid_blue_front_transparent.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Leaderboard.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sounds\wasted.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sounds\you_win.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Textures\heart.png">

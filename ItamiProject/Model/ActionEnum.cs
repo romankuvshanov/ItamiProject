@@ -2,10 +2,10 @@
 {
     public enum PlayerAction
     {
-        MoveU,
-        MoveD,
-        MoveL,
-        MoveR,
+        MoveUp,
+        MoveDown,
+        MoveLeft,
+        MoveRight,
         Attack
     }
 }

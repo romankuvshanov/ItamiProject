@@ -40,10 +40,10 @@ namespace Controller
         {
             if (isDown)
             {
-                if (_actionSet.Contains(PlayerAction.MoveU) && action == PlayerAction.MoveD) _actionSet.Remove(PlayerAction.MoveU);
-                else if (_actionSet.Contains(PlayerAction.MoveD) && action == PlayerAction.MoveU) _actionSet.Remove(PlayerAction.MoveD);
-                if (_actionSet.Contains(PlayerAction.MoveL) && action == PlayerAction.MoveR) _actionSet.Remove(PlayerAction.MoveL);
-                else if (_actionSet.Contains(PlayerAction.MoveR) && action == PlayerAction.MoveL) _actionSet.Remove(PlayerAction.MoveR);
+                if (_actionSet.Contains(PlayerAction.MoveUp) && action == PlayerAction.MoveDown) _actionSet.Remove(PlayerAction.MoveUp);
+                else if (_actionSet.Contains(PlayerAction.MoveDown) && action == PlayerAction.MoveUp) _actionSet.Remove(PlayerAction.MoveDown);
+                if (_actionSet.Contains(PlayerAction.MoveLeft) && action == PlayerAction.MoveRight) _actionSet.Remove(PlayerAction.MoveLeft);
+                else if (_actionSet.Contains(PlayerAction.MoveRight) && action == PlayerAction.MoveLeft) _actionSet.Remove(PlayerAction.MoveRight);
                 _actionSet.Add(action);
             }
             else _actionSet.Remove(action);
@@ -53,7 +53,7 @@ namespace Controller
         {
             _game.SetPlayerToAction(_actionSet, elapsedTime);
             _game.MoveEnemy();
-            _game.MoveProjectiles();
+            _game.MoveProjectiles(elapsedTime);
             _game.MoveFires();
         }
     }
