@@ -61,8 +61,6 @@ namespace View
         private Button _btnLeaderboard;
         private NumericUpDown _livesNumericUD;
         private Label _livesNumberLbl;
-        //private ComboBox _resolutionsComboB;
-        //private Label _resolutionsLbl;
         private ComboBox _difficultiesComboB;
         private Label _difficultyLbl;
         private ComboBox _keysLayoutComboB;
@@ -157,12 +155,14 @@ namespace View
             }
             else Invalidate(_gameArea);
         }
+
         private void HandleGameOver(int totalScore)
         {
             var f = new LeaderboardWindow(false, totalScore);
             f.ShowDialog();
             Application.Restart();
         }
+
         private void InitializeControls()
         {
             int horizontalPadding = 5;
@@ -236,25 +236,6 @@ namespace View
                 Top = _livesNumericUD.Top,
                 Left = _livesNumericUD.Right + horizontalPadding
             };
-            //_resolutionsComboB = new ComboBox()
-            //{
-            //    Top = _livesNumericUD.Bottom + verticalPadding,
-            //    Left = _livesNumericUD.Left,
-            //    Width = 90,
-            //    DropDownStyle = ComboBoxStyle.DropDownList,
-            //};
-            //_resolutionsComboB.Items.AddRange(new string[] { "1920x1080", "1280x720", "640x480" });
-            //_resolutionsComboB.SelectedItem = _resolutionsComboB.Items[1];
-            //_resolutionsComboB.SelectionChangeCommitted += Resolutions_SelectionChangeCommitted;
-            //_resolutionsLbl = new Label()
-            //{
-            //    AutoSize = true,
-            //    Text = "Разрешение",
-            //    Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Underline),
-            //    ForeColor = Color.BlueViolet,
-            //    Top = _resolutionsComboB.Top,
-            //    Left = _resolutionsComboB.Right + horizontalPadding
-            //};
             _difficultiesComboB = new ComboBox()
             {
                 Top = _livesNumericUD.Bottom + verticalPadding,
@@ -380,8 +361,6 @@ namespace View
             Controls.Add(_btnLeaderboard);
             Controls.Add(_livesNumericUD);
             Controls.Add(_livesNumberLbl);
-            //Controls.Add(_resolutionsComboB);
-            //Controls.Add(_resolutionsLbl);
             Controls.Add(_difficultiesComboB);
             Controls.Add(_difficultyLbl);
             Controls.Add(_keysLayoutComboB);
@@ -394,6 +373,7 @@ namespace View
             Controls.Add(_ctrlTutorialLbl);
             Controls.Add(_btnHelp);
         }
+
         private void _btnHelp_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Вы с врагом атакуете друг друга снарядами.\n\n" +
@@ -409,6 +389,7 @@ namespace View
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
+
         private void _btnHelp_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
@@ -438,29 +419,26 @@ namespace View
             Cursor = Cursors.Hand;
             _btnLeaderboard.BackColor = Color.Black;
         }
+
         private void _btnLeaderboard_Click(object sender, EventArgs e)
         {
             var f = new LeaderboardWindow(true);
             f.ShowDialog();
         }
+
         private void _btnExit_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
             _btnExit.BackColor = _btnStart.BackColor;
         }
+
         private void _btnExit_MouseEnter(object sender, EventArgs e)
         {
             _menuSelectionSnd.Play();
             Cursor = Cursors.Hand;
             _btnExit.BackColor = Color.Black;
         }
-        //private void Resolutions_SelectionChangeCommitted(object sender, EventArgs e)
-        //{
-        //    int w = int.Parse(_resolutionsComboB.SelectedItem.ToString().Split('x')[0]);
-        //    int h = int.Parse(_resolutionsComboB.SelectedItem.ToString().Split('x')[1]);
-        //    Size res = new Size(w, h);
-        //    ClientSize = res;
-        //}
+
         private void ButtonStart_MouseEnter(object sender, EventArgs e)
         {
             _menuSelectionSnd.Play();
@@ -469,6 +447,7 @@ namespace View
             _btnStart.BackColor = Color.Black;
             _btnStart.ForeColor = Color.DarkRed;
         }
+
         private void ButtonStart_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
@@ -476,6 +455,7 @@ namespace View
             _btnStart.BackColor = Color.OrangeRed;
             _btnStart.ForeColor = Color.Black;
         }
+
         private void CreateKeysLayout()
         {
             if (_keysLayoutComboB.SelectedIndex == 0)
@@ -495,6 +475,7 @@ namespace View
                 _keysLayoutDict[Keys.Space] = PlayerAction.Attack;
             }
         }
+
         private void HideUnnecessaryControls()
         {
             _btnHelp.Visible = false;
@@ -504,14 +485,13 @@ namespace View
             _btnLeaderboard.Visible = false;
             _introLbl.Visible = false;
             _livesNumericUD.Visible = false;
-            //_resolutionsComboB.Visible = false;
             _difficultiesComboB.Visible = false;
             _keysLayoutComboB.Visible = false;
             _livesNumberLbl.Visible = false;
-            //_resolutionsLbl.Visible = false;
             _difficultyLbl.Visible = false;
             _keysLayoutLbl.Visible = false;
         }
+
         private void StartGame(object sender, EventArgs e)
         {
             _menuOkSnd.Play();
@@ -529,6 +509,7 @@ namespace View
             Focus(); // <- забрать фокус у (какого-то) контрола, отдать форме
             _gameTimer.Start();
         }
+
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
@@ -621,6 +602,7 @@ namespace View
             foreach (var projectile in _game.Pattern.Projectiles)
                 e.Graphics.FillEllipse(Brushes.Red, projectile.Location.X, projectile.Location.Y, projectile.Diameter, projectile.Diameter);
         }
+
         private void ShowDefeatedScreen()
         {
             _scoreLbl.Visible = false;
